@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 
 
 def subdivision(points, depth=6, t=0.5):
-    curve = subdivision_impl(points, depth, t=t)
+    curve = subdivision_rec(points, depth, t=t)
     curve_full = [points[0]] + curve + [points[-1]]
     return np.array(curve_full)
 
 
-def subdivision_impl(points, depth, t=0.5):
+def subdivision_rec(points, depth, t=0.5):
     # make a copy of points since we will modify them later
     points = np.array(points)
     n = len(points)  # number of points
@@ -34,8 +34,8 @@ def subdivision_impl(points, depth, t=0.5):
 
     if depth == 0:
         return [bm]
-    return subdivision_impl(upper, depth - 1) + [bm] \
-           + subdivision_impl(lower, depth - 1)
+    return subdivision_rec(upper, depth - 1) + [bm] \
+           + subdivision_rec(lower, depth - 1)
 
 
 control_points = np.array([(0, 0), (0, 1), (1, 1), (1, 0)], float)
