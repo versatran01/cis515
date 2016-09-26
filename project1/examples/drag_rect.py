@@ -28,8 +28,10 @@ class DraggableRectangle:
 
     def on_motion(self, event):
         'on motion we will move the rect if the mouse is over us'
-        if self.press is None: return
-        if event.inaxes != self.rect.axes: return
+        if self.press is None:
+            return
+        if event.inaxes != self.rect.axes:
+            return
         x0, y0, xpress, ypress = self.press
         dx = event.xdata - xpress
         dy = event.ydata - ypress
