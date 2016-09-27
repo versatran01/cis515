@@ -1,93 +1,105 @@
 import numpy as np
 from scipy.special import binom
-import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
+from abc import ABCMeta
 
 
-class Bezier:
-    def __init__(self, num=100):
+class BezierBase:
+    def create_curve(self, points):
+        raise NotImplementedError
+
+
+def bernstein(n, k, t):
+    return binom(n, k) * (t ** k) * ((1 - t) ** (n - k))
+
+
+class BezierBernstein(BezierBase):
+    def __init__(self, num=256):
         """
-        :param num: number of samples
+        :param num: number of samples for the entire curve
         """
         self.num = num
-        self.t = np.linspace(0, 1, num=num)
+        self.ts = np.linspace(0, 1, num)
 
-    def __call__(self, points):
-        m = len(points)
-        if m == 0:
-            raise RuntimeError("points is empty")
+    def create_curve(self, points):
+        n = len(points)
         d = len(points[0])
+        m = n - 1
 
         curve = np.zeros((self.num, d))
-        for k in range(m):
-            curve += np.outer(Bernstein(m - 1, k)(self.t), points[k])
+        for k in range(n):
+            curve += np.outer(bernstein(m, k, self.ts), points[k])
         return curve
 
 
-class Bernstein:
-    def __init__(self, n, k):
-        self.n_choose_k = binom(n, k)
-        self.n = n
-        self.k = k
-
-    def __call__(self, t):
-        return self.n_choose_k * (t ** self.k) * ((1 - t) ** (self.n - self.k))
-
-
-class BezierBuilder:
-    def __init__(self, control_points):
-        """
-        :param control_points:
-        :type control_points: Line2D
-        """
-        self.control_points = control_points
-        self.xp = list(control_points.get_xdata())
-        self.yp = list(control_points.get_ydata())
-        self.canvas = control_points.figure.canvas
-        self.ax = control_points.axes
-
-        # Event handler for mouse clicking
-        self.cid_click = self.canvas.mpl_connect('button_press_event', self)
-
-        # Create Bezier curve
-        line_bezier = Line2D([], [],
-                             color=control_points.get_markeredgecolor())
-        self.bezier_curve = self.ax.add_line(line_bezier)
-
-        self.bezier = Bezier(num=200)
-
-    def __call__(self, event):
-        """
-        :param event:
-        :return:
-        """
-        # Ignore clicks outside axes
-        if event.inaxes != self.ax:
-            return
-
-        # Add control point
-        self.xp.append(event.xdata)
-        self.yp.append(event.ydata)
-        self.control_points.set_data(self.xp, self.yp)
-
-        # Rebuild Bezier curve and update canvas
-        self.bezier_curve.set_data(*self.build_bezier())
-        self.canvas.draw()
-
-    def build_bezier(self):
-        points = self.bezier(list(zip(self.xp, self.yp)))
-        x, y = np.transpose(points)
-        return x, y
+def de_casteljau(points, t):
+    n = len(points)  # number of control points
+    m = n - 1  # polynomial degree
+    for k in range(m):
+        for i in range(m - k):
+            points[i] = (1 - t) * points[i] + t * points[i + 1]
+    return points[0]
 
 
-if __name__ == '__main__':
-    # Initial setup
-    fig, ax = plt.subplots()
+class BezierDeCasteljau(BezierBase):
+    def __init__(self, num=256):
+        self.num = num
+        self.ts = np.linspace(0, 1, num)
 
-    line = Line2D([], [],
-                  linestyle='--', marker='+', markeredgewidth=2)
-    ax.add_line(line)
-    # Create BezierBuilder
-    bezier_builder = BezierBuilder(line)
+    def create_curve(self, points):
+        points = np.array(points, float)
+        curve = np.zeros((self.num, 2))
+        for i, t in enumerate(self.ts):
+            curve[i] = de_casteljau(points, t)
+        return curve
 
-    plt.show()
+
+def subdivision(points, depth=6, t=0.5):
+    curve = subdivision_rec(points, depth, t=t)
+    curve_full = [points[0]] + curve + [points[-1]]
+    return np.array(curve_full)
+
+
+def subdivision_rec(points, depth, t=0.5):
+    """
+    Recursive version of the subdivision algorithm
+    :param points: control points
+    :param depth:
+    :param t:
+    :return:
+    """
+    # make a copy of points since we will modify them later
+    points = np.array(points)
+    n = len(points)  # number of points
+    d = len(points[0])  # dimension
+    m = n - 1  # degree of polynomial
+
+    upper = np.zeros((n, d))
+    lower = np.zeros_like(upper)
+
+    for k in range(m):
+        upper[k] = points[0]
+        lower[k] = points[m - k]
+
+        for i in range(m - k):
+            points[i] = (1 - t) * points[i] + t * points[i + 1]
+
+    # add last point to ud and ld
+    bm = points[0]
+    upper[-1] = bm
+    lower[-1] = bm
+    # flip lower to ensure correct sequence
+    lower = np.flipud(lower)
+
+    if depth == 0:
+        return [bm]
+    return subdivision_rec(upper, depth - 1) + [bm] \
+           + subdivision_rec(lower, depth - 1)
+
+
+class BezierSubdivision(BezierBase):
+    def __init__(self, depth=7):
+        self.depth = depth
+
+    def create_curve(self, points):
+        curve = subdivision(points, self.depth)
+        return curve
