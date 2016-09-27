@@ -13,13 +13,14 @@ class DeboorBuilder:
         self.yp = list(deboor_points.get_ydata())
         self.canvas = deboor_points.figure.canvas
         self.ax = deboor_points.axes
-        self.cid_click = self.canvas.mpl_connect('button_press_event', self)
+        self.cid_button_press = self.canvas.mpl_connect('button_press_event', self.on_button_press)
+        self.cid_key_press = self.canvas.mpl_connect('key_press_event', self.on_key_press)
         self.xp_bez = list()
         self.yp_bez = list()
         self.pnt_cnt = 0
         self.last_point = False
 
-    def __call__(self, event):
+    def on_button_press(self, event):
 
         if event.inaxes != self.ax:
             return
@@ -29,9 +30,27 @@ class DeboorBuilder:
         self.calcBezierControlPoints()
         self.canvas.draw()
 
+    def on_key_press(self, event):
+        """
+        :param event:
+        :return:
+        """
+        if event.key == 't':
+            self.marker_on = not self.marker_on
+            if self.marker_on:
+                self.line_bezier.set_marker('.')
+            else:
+                self.line_bezier.set_marker("")
+
+        self.canvas.draw()
+
+
+
 
     def calcBezierControlPoints(self,):
+
         self.pnt_cnt = self.pnt_cnt + 1
+
         if self.pnt_cnt == 1:
             self.xp_bez.append(self.xp[0])
             self.yp_bez.append(self.yp[0])
@@ -47,12 +66,7 @@ class DeboorBuilder:
             self.xp_bez.append(2*(self.xp[self.pnt_cnt-1] + self.xp[self.pnt_cnt - 2]) / 3)
             self.yp_bez.append(2*(self.yp[self.pnt_cnt-1] + self.yp[self.pnt_cnt - 2]) / 3)
 
-
-
-
-
-        print self.pnt_cnt
-        print self.xp_bez
+        print 'in here'
 
 
 
