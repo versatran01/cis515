@@ -17,7 +17,8 @@ class BezierBuilder:
         """
         Key-bindings
 
-            't' toggle vertex markers on and off.
+            't' - toggle vertex markers on and off.
+            '1, 2, 3' -
         """
         self.marker_on = True
 
