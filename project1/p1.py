@@ -22,6 +22,7 @@ class DeboorBuilder:
         self.marker_on = False
         self.bezier_poly = Line2D([], [], linestyle='-', marker='o', markeredgewidth=2)
         self.line_bezier_poly = self.ax.add_line(self.bezier_poly)
+        self.control_points = list()
 
     def on_button_press(self, event):
 
@@ -34,6 +35,7 @@ class DeboorBuilder:
         self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
         self.canvas.draw()
 
+
     def on_key_press(self, event):
         """
         :param event:
@@ -41,26 +43,16 @@ class DeboorBuilder:
         """
         if event.key == ' ':
             self.last_point = True
-            self.xp_bez.pop()
-            self.xp_bez.pop()
-            self.xp_bez.pop()
-            self.xp_bez.pop()
-            self.yp_bez.pop()
-            self.yp_bez.pop()
-            self.yp_bez.pop()
-            self.yp_bez.pop()
+
+            for i in range(0, 4):
+                self.xp_bez.pop()
+                self.yp_bez.pop()
 
             self.xp_bez.append((self.xp[self.pnt_cnt - 3] + self.xp[self.pnt_cnt - 2]) / 2)
             self.yp_bez.append((self.yp[self.pnt_cnt - 3] + self.yp[self.pnt_cnt - 2]) / 2)
             self.xp_bez.append(self.xp[self.pnt_cnt - 1])
             self.yp_bez.append(self.yp[self.pnt_cnt - 1])
 
-        # elif event.key == 't':
-        #     self.marker_on = not self.marker_on
-        #     if self.marker_on:
-        #         self.line_bezier.set_marker('.')
-        #     else:
-        #         self.line_bezier.set_marker("")
         self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
         self.canvas.draw()
 
@@ -68,40 +60,24 @@ class DeboorBuilder:
 
         self.pnt_cnt += 1
 
-        if self.pnt_cnt == 1:
-            self.xp_bez.append(self.xp[0])
-            self.yp_bez.append(self.yp[0])
+        if self.pnt_cnt == 1 or self.pnt_cnt == 2:
+            self.xp_bez.append(self.xp[self.pnt_cnt-1])
+            self.yp_bez.append(self.yp[self.pnt_cnt-1])
         elif self.pnt_cnt == 3:
             self.xp_bez.append((self.xp[1] + self.xp[2])/2)
             self.yp_bez.append((self.yp[1] + self.yp[2])/2)
-        # elif self.last_point:
-            # self.xp_bez.pop()
-            # self.xp_bez.pop()
-            # self.xp_bez.pop()
-            # self.yp_bez.pop()
-            # self.yp_bez.pop()
-            # self.yp_bez.pop()
-            # self.xp_bez.append((self.xp[self.pnt_cnt-4] + self.xp[self.pnt_cnt-3]) / 2)
-            # self.yp_bez.append((self.yp[self.pnt_cnt-4] + self.yp[self.pnt_cnt-3]) / 2)
-            # self.xp_bez.append(self.xp[self.pnt_cnt-1])
-            # self.yp_bez.append(self.yp[self.pnt_cnt-1])
 
         elif self.pnt_cnt != 2:
             self.xp_bez.append(1*(self.xp[self.pnt_cnt-1])/3 + 2*(self.xp[self.pnt_cnt - 2])/3)
             self.yp_bez.append(1*(self.yp[self.pnt_cnt-1])/3 + 2*(self.yp[self.pnt_cnt - 2])/3)
             self.xp_bez.append(2*(self.xp[self.pnt_cnt-1])/3 + 1*(self.xp[self.pnt_cnt - 2])/3)
             self.yp_bez.append(2*(self.yp[self.pnt_cnt-1])/3 + 1*(self.yp[self.pnt_cnt - 2])/3)
+            # self.xp_bez.append((self.xp_bez[self.pnt_cnt-1] + self.xp_bez[self.pnt_cnt-2])/2)
+            # self.yp_bez.append((self.yp_bez[self.pnt_cnt-1] + self.yp_bez[self.pnt_cnt - 2]) / 2)
+            # self.xp_bez.insert(self.pnt_cnt-1, (self.xp_bez[self.pnt_cnt-2] + self.xp_bez[self.pnt_cnt-1])/2)
+            # self.yp_bez.insert(self.pnt_cnt-1, (self.yp_bez[self.pnt_cnt-2] + self.yp_bez[self.pnt_cnt - 1]) / 2)
             print self.xp_bez
             print self.yp_bez
-
-        print 'in here'
-
-
-
-
-
-
-
 
 
 
