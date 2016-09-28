@@ -1,4 +1,5 @@
 import numpy as np
+from warnings import warn
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from project1.bezier import (BezierBase, BezierBernstein, BezierDeCasteljau,
@@ -17,7 +18,7 @@ class BezierBuilder:
 
         self.ax = ax
         control_points = Line2D([], [],
-                                linestyle='--', marker='+',
+                                linestyle='--', marker='+', color='m',
                                 markeredgewidth=2)
         self.line_control_points = self.ax.add_line(control_points)
         self.control_points_x = self.line_control_points.get_xdata()
@@ -32,12 +33,13 @@ class BezierBuilder:
 
         # Create Bezier curve
         bezier_curve = Line2D([], [],
-                              color=self.line_control_points.get_markeredgecolor())
+                              color='b')
         self.line_bezier = self.ax.add_line(bezier_curve)
 
         # Bezier type, default to subdivision
         self.bezier_type = 3
         self.bezier = BezierSubdivision()
+        self.ax.set_title('Subdivision')
 
     def on_key_press(self, event):
         """
@@ -55,20 +57,27 @@ class BezierBuilder:
             try:
                 bezier_type = int(event.key)
                 # only redraw if it's a different type
-                if bezier_type != self.bezier_type:
+                if bezier_type > 3:
+                    warn("not a valid bezier type")
+                elif bezier_type != self.bezier_type:
                     if bezier_type == 1:
                         self.bezier = BezierBernstein()
-                        print('Bernstein')
+                        self.ax.set_title('Bernstein')
+                        self.line_bezier.set_color('r')
                     elif bezier_type == 2:
                         self.bezier = BezierDeCasteljau()
-                        print('DeCasteljau')
+                        self.ax.set_title('DeCasteljau')
+                        self.line_bezier.set_color('g')
                     elif bezier_type == 3:
                         self.bezier = BezierSubdivision()
-                        print('Subdivision')
+                        self.ax.set_title('Subdivision')
+                        self.line_bezier.set_color('b')
                     else:
                         pass
+
                     self.bezier_type = bezier_type
-                    self.line_bezier.set_data(*self.build_bezier())
+                    if len(self.control_points_x) > 0:
+                        self.line_bezier.set_data(*self.build_bezier())
 
             except ValueError:
                 print('value error')

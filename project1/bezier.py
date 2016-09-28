@@ -101,5 +101,6 @@ class BezierSubdivision(BezierBase):
         self.depth = depth
 
     def create_curve(self, points):
+        points = np.array(points)
         curve = subdivision(points, self.depth)
         return curve
