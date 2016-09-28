@@ -1,15 +1,8 @@
-from enum import Enum
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from project1.bezier import (BezierBase, BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
-
-
-class BezierType(Enum):
-    Bernstein = 1
-    DeCasteljau = 2
-    Subdivision = 3
 
 
 class BezierBuilder:
@@ -20,7 +13,7 @@ class BezierBuilder:
             't' - toggle vertex markers on and off.
             '1, 2, 3' -
         """
-        self.marker_on = True
+        self.marker_on = False
 
         self.ax = ax
         control_points = Line2D([], [],
@@ -42,6 +35,8 @@ class BezierBuilder:
                               color=self.line_control_points.get_markeredgecolor())
         self.line_bezier = self.ax.add_line(bezier_curve)
 
+        # Bezier type, default to subdivision
+        self.bezier_type = 3
         self.bezier = BezierSubdivision()
 
     def on_key_press(self, event):
@@ -56,6 +51,28 @@ class BezierBuilder:
                 self.line_bezier.set_marker('.')
             else:
                 self.line_bezier.set_marker("")
+        else:
+            try:
+                bezier_type = int(event.key)
+                # only redraw if it's a different type
+                if bezier_type != self.bezier_type:
+                    if bezier_type == 1:
+                        self.bezier = BezierBernstein()
+                        print('Bernstein')
+                    elif bezier_type == 2:
+                        self.bezier = BezierDeCasteljau()
+                        print('DeCasteljau')
+                    elif bezier_type == 3:
+                        self.bezier = BezierSubdivision()
+                        print('Subdivision')
+                    else:
+                        pass
+                    self.bezier_type = bezier_type
+                    self.line_bezier.set_data(*self.build_bezier())
+
+            except ValueError:
+                print('value error')
+                pass
 
         self.canvas.draw()
 
