@@ -8,6 +8,12 @@ from project1.bezier import (BezierBase, BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
 
 
+def update_line3d(line_3d, *args):
+    x, y, z = args
+    line_3d.set_data(np.array(x), np.array(y))
+    line_3d.set_3d_properties(np.array(z))
+
+
 class BezierBuilder:
     def __init__(self, ax_2d, ax_3d):
         """
@@ -45,8 +51,9 @@ class BezierBuilder:
         # Event handler for mouse clicking
         self.cid_button_press = self.canvas.mpl_connect('button_press_event',
                                                         self.on_button_press)
-        self.cid_button_release = self.canvas.mpl_connect('button_release_event',
-                                                          self.on_button_release)
+        self.cid_button_release = self.canvas.mpl_connect(
+            'button_release_event',
+            self.on_button_release)
         self.cid_key_press = self.canvas.mpl_connect('key_press_event',
                                                      self.on_key_press)
         self.cid_motion_notify = self.canvas.mpl_connect('motion_notify_event',
@@ -90,8 +97,14 @@ class BezierBuilder:
         self.patch_circle.radius = 0
 
         # Draw 3d control points and also 3d Bezier curve
-        self.line_points_3d.set_data(np.array(self.points_x), np.array(self.points_y))
-        self.line_points_3d.set_3d_properties(np.array(self.points_z))
+        update_line3d(self.line_points_3d,
+                      self.points_x,
+                      self.points_y,
+                      self.points_z)
+        update_line3d(self.line_bezier_3d,
+                      *self.build_bezier(self.points_x,
+                                         self.points_y,
+                                         self.points_z))
         self.canvas.draw()
 
     def on_key_press(self, event):
