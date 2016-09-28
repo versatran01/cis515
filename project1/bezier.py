@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.special import binom
-from abc import ABCMeta
 
 
 class BezierBase:
