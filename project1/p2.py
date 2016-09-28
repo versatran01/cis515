@@ -1,4 +1,5 @@
 import numpy as np
+from warnings import warn
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from project1.bezier import (BezierBase, BezierBernstein, BezierDeCasteljau,
@@ -11,13 +12,16 @@ class BezierBuilder:
         Key-bindings
 
             't' - toggle vertex markers on and off.
-            '1, 2, 3' -
+            '1, 2, 3' - Switch between different Bezier type
+                        1 - Bernstein
+                        2 - DeCasteljau
+                        3 - Subdivision
         """
         self.marker_on = False
 
         self.ax = ax
         control_points = Line2D([], [],
-                                linestyle='--', marker='+',
+                                linestyle='--', marker='+', color='m',
                                 markeredgewidth=2)
         self.line_control_points = self.ax.add_line(control_points)
         self.control_points_x = self.line_control_points.get_xdata()
@@ -32,12 +36,17 @@ class BezierBuilder:
 
         # Create Bezier curve
         bezier_curve = Line2D([], [],
-                              color=self.line_control_points.get_markeredgecolor())
+                              color='b')
         self.line_bezier = self.ax.add_line(bezier_curve)
+
+        # Number of points/depth
+        self.depth = 6
+        self.num = 2 ** (self.depth + 1)
 
         # Bezier type, default to subdivision
         self.bezier_type = 3
-        self.bezier = BezierSubdivision()
+        self.bezier = BezierSubdivision(depth=self.depth)
+        self.ax.set_title('Subdivision')
 
     def on_key_press(self, event):
         """
@@ -51,27 +60,37 @@ class BezierBuilder:
                 self.line_bezier.set_marker('.')
             else:
                 self.line_bezier.set_marker("")
+        elif event.key == '+':
+            raise NotImplementedError
+        elif event.key == '-':
+            raise NotImplementedError
         else:
             try:
                 bezier_type = int(event.key)
                 # only redraw if it's a different type
-                if bezier_type != self.bezier_type:
+                if bezier_type > 3:
+                    warn("not a valid bezier type")
+                elif bezier_type != self.bezier_type:
                     if bezier_type == 1:
-                        self.bezier = BezierBernstein()
-                        print('Bernstein')
+                        self.bezier = BezierBernstein(num=self.num)
+                        self.line_bezier.set_color('r')
+                        self.ax.set_title('Bernstein')
                     elif bezier_type == 2:
-                        self.bezier = BezierDeCasteljau()
-                        print('DeCasteljau')
+                        self.bezier = BezierDeCasteljau(num=self.num)
+                        self.line_bezier.set_color('g')
+                        self.ax.set_title('DeCasteljau')
                     elif bezier_type == 3:
-                        self.bezier = BezierSubdivision()
-                        print('Subdivision')
+                        self.bezier = BezierSubdivision(depth=self.depth)
+                        self.line_bezier.set_color('b')
+                        self.ax.set_title('Subdivision')
                     else:
                         pass
+
                     self.bezier_type = bezier_type
-                    self.line_bezier.set_data(*self.build_bezier())
+                    if len(self.control_points_x) > 0:
+                        self.line_bezier.set_data(*self.build_bezier())
 
             except ValueError:
-                print('value error')
                 pass
 
         self.canvas.draw()
