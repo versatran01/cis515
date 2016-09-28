@@ -19,6 +19,7 @@ class DeboorBuilder:
         self.yp_bez = list()
         self.pnt_cnt = 0
         self.last_point = False
+        self.marker_on = False
 
     def on_button_press(self, event):
 
@@ -35,12 +36,14 @@ class DeboorBuilder:
         :param event:
         :return:
         """
-        if event.key == 't':
-            self.marker_on = not self.marker_on
-            if self.marker_on:
-                self.line_bezier.set_marker('.')
-            else:
-                self.line_bezier.set_marker("")
+        if event.key == ' ':
+            self.last_point = True
+        # elif event.key == 't':
+        #     self.marker_on = not self.marker_on
+        #     if self.marker_on:
+        #         self.line_bezier.set_marker('.')
+        #     else:
+        #         self.line_bezier.set_marker("")
 
         self.canvas.draw()
 
@@ -49,7 +52,7 @@ class DeboorBuilder:
 
     def calcBezierControlPoints(self,):
 
-        self.pnt_cnt = self.pnt_cnt + 1
+        self.pnt_cnt += 1
 
         if self.pnt_cnt == 1:
             self.xp_bez.append(self.xp[0])
