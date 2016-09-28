@@ -123,7 +123,9 @@ class BezierBuilder:
 
 if __name__ == '__main__':
     # Initial setup
-    fig, ax = plt.subplots()
+    fig = plt.figure(facecolor='white')
+    ax = fig.add_subplot(111)
+    ax.set_aspect('equal')
 
     # Create BezierBuilder
     bezier_builder = BezierBuilder(ax)
