@@ -1,5 +1,4 @@
 import numpy as np
-from warnings import warn
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from mpl_toolkits.mplot3d.art3d import Line3D

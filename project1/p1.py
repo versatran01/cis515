@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 from scipy.special import binom
 import matplotlib.pyplot as plt
@@ -5,6 +6,10 @@ from matplotlib.lines import Line2D
 from project1.bezier_builder import BezierBuilder2D
 from project1.bezier import (BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
+
+def deboor_to_bezier(points, last_point=False):
+    points = np.array(points)
+    return []
 
 
 class DeboorBuilder:
@@ -61,9 +66,12 @@ class DeboorBuilder:
 
         if event.inaxes != self.ax:
             return
+        if self.last_point:
+            return
         self.xp.append(event.xdata)
         self.yp.append(event.ydata)
         self.deboor_points.set_data(self.xp, self.yp)
+        # list_bezier_control_points = deboor_to_bezier(list(zip(xp, yp)))
         self.calcBezierControlPoints()
         self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
         self.canvas.draw()
@@ -154,7 +162,7 @@ class DeboorBuilder:
             self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
             self.update_points_and_curve_2d()
             self.canvas.draw()
-            print self.segments
+            print(self.segments)
 
     def calcBezierControlPoints(self):
 
@@ -179,7 +187,7 @@ class DeboorBuilder:
                 for i in range(self.cnt, self.cnt + 4):
                     new_segment.append([self.xp_bez[i], self.yp_bez[i]])
                 self.segments.append(new_segment)
-                print self.segments
+                # print self.segments
                 self.seg_count += 1
                 self.cnt += 4
 
@@ -205,7 +213,7 @@ class DeboorBuilder:
                 new_segment.append([self.xp_bez[i], self.yp_bez[i]])
             self.segments.append(new_segment)
             self.cnt += 4
-            print self.segments[self.seg_count]
+            print(self.segments[self.seg_count])
             self.seg_count += 1
         self.update_points_and_curve_2d()
 
