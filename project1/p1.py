@@ -47,6 +47,7 @@ class DeboorBuilder:
         if event.key == ' ':
             self.last_point = True
 
+        if self.pnt_cnt > 7:
             for i in range(0, 5):
                 self.xp_bez.pop()
                 self.yp_bez.pop()
@@ -73,10 +74,44 @@ class DeboorBuilder:
 
             self.segments.append(new_segment)
 
+        elif self.pnt_cnt == 5 or self.pnt_cnt == 6:
+            for i in range(0, 5):
+                self.xp_bez.pop()
+                self.yp_bez.pop()
+
+            self.segments.pop()
+            first_segment = self.segments.pop()
+            first_segment.pop()
+
+            new_point_x = (self.xp[self.pnt_cnt-3]/2 + self.xp[self.pnt_cnt-2]/2 + first_segment[2][0])/2
+            new_point_y = (self.yp[self.pnt_cnt-3]/2 + self.yp[self.pnt_cnt-2]/2 + first_segment[2][1])/2
+            first_segment.append([new_point_x, new_point_y])
+            self.xp_bez.append(new_point_x)
+            self.yp_bez.append(new_point_y)
+            self.xp_bez.append(new_point_x)
+            self.yp_bez.append(new_point_y)
+
+            self.xp_bez.append(self.xp[self.pnt_cnt-3]/2 + self.xp[self.pnt_cnt-2]/2)
+            self.yp_bez.append(self.yp[self.pnt_cnt-3]/2 + self.yp[self.pnt_cnt-2]/2)
+
+            self.xp_bez.append(self.xp[self.pnt_cnt-2])
+            self.yp_bez.append(self.yp[self.pnt_cnt-2])
+
+            self.xp_bez.append(self.xp[self.pnt_cnt - 1])
+            self.yp_bez.append(self.yp[self.pnt_cnt - 1])
+
+            second_segment = list()
+            for i in range(self.cnt-4, self.cnt):
+                second_segment.append([self.xp_bez[i], self.yp_bez[i]])
+
+            self.segments.append(first_segment)
+            self.segments.append(second_segment)
 
         self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
         self.canvas.draw()
         print self.segments
+
+        
     def calcBezierControlPoints(self):
 
         self.pnt_cnt += 1
