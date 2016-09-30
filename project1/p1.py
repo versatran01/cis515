@@ -30,18 +30,19 @@ def deboor_to_bezier(points, last_point=False):
                 b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
                 b_points.append(d_points[num_dp - 2])
                 b_points.append(d_points[num_dp - 1])
+                break
 
             if num_dp == 6:
+                j = num_dp - 2
                 b_points.append(b_points[-1])
-                b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
-                b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
-                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 + b_points[-1]) / 2)
-                b_points.append(b_points[-1])
-                b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
+                b_points.append(d_points[j - 1] / 3 + 2 * d_points[j - 2] / 3)
+                b_points.append(d_points[j - 2] / 3 + 2 * d_points[j - 1] / 3)
+                b_points.append(((d_points[j] + d_points[j - 1]) / 2 + b_points[-1]) / 2)
+                # b_points.append(b_points[-1])
+                b_points.append((d_points[j] + d_points[j - 1]) / 2)
                 b_points.append(d_points[num_dp - 2])
                 b_points.append(d_points[num_dp - 1])
-
-
+                break
 
             if i < (num_dp - 2):
                 b_points.append(b_points[-1])
