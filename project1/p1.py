@@ -71,6 +71,7 @@ def deboor_to_bezier(points, last_point=False):
 
     return np.array(b_points)
 
+
 class DeboorBuilder:
     def __init__(self, ax_2d):
         self.ax_2d = ax_2d
@@ -150,7 +151,6 @@ class DeboorBuilder:
         :param event:
         :return:
         """
-
         if event.key == ' ':
             self.last_point = True
             bezier_points = deboor_to_bezier(list(zip(self.xp, self.yp)), True)
@@ -160,140 +160,6 @@ class DeboorBuilder:
             self.yp_bez = bezier_points[:][1]
             self.update_points_and_curve_2d()
             self.canvas.draw()
-
-            # if self.pnt_cnt >= 7:
-            #     for i in range(0, 5):
-            #         self.xp_bez.pop()
-            #         self.yp_bez.pop()
-            #
-            #     old_segment = self.segments.pop()
-            #     self.cnt -= 5
-            #     old_segment.pop()
-            #     self.xp_bez.append(
-            #         self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
-            #             self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
-            #     self.yp_bez.append(
-            #         self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
-            #             self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
-            #     old_segment.append(
-            #         [self.xp_bez[self.cnt], self.yp_bez[self.cnt]])
-            #     self.segments.append(old_segment)
-            #     self.xp_bez.append(
-            #         self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
-            #             self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
-            #     self.yp_bez.append(
-            #         self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
-            #             self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
-            #     self.xp_bez.append(
-            #         (self.xp[self.pnt_cnt - 3] + self.xp[self.pnt_cnt - 2]) / 2)
-            #     self.yp_bez.append(
-            #         (self.yp[self.pnt_cnt - 3] + self.yp[self.pnt_cnt - 2]) / 2)
-            #     self.xp_bez.append(self.xp[self.pnt_cnt - 2])
-            #     self.yp_bez.append(self.yp[self.pnt_cnt - 2])
-            #     self.xp_bez.append(self.xp[self.pnt_cnt - 1])
-            #     self.yp_bez.append(self.yp[self.pnt_cnt - 1])
-            #
-            #     new_segment = list()
-            #     for i in range(self.cnt + 1, self.cnt + 5):
-            #         new_segment.append([self.xp_bez[i], self.yp_bez[i]])
-            #
-            #     self.segments.append(new_segment)
-            #
-            # elif self.pnt_cnt == 5 or self.pnt_cnt == 6:
-            #     for i in range(0, 5):
-            #         self.xp_bez.pop()
-            #         self.yp_bez.pop()
-            #
-            #     self.segments.pop()
-            #     first_segment = self.segments.pop()
-            #     first_segment.pop()
-            #
-            #     new_point_x = (self.xp[self.pnt_cnt - 3] / 2 + self.xp[
-            #         self.pnt_cnt - 2] / 2 + first_segment[2][0]) / 2
-            #     new_point_y = (self.yp[self.pnt_cnt - 3] / 2 + self.yp[
-            #         self.pnt_cnt - 2] / 2 + first_segment[2][1]) / 2
-            #     first_segment.append([new_point_x, new_point_y])
-            #     self.xp_bez.append(new_point_x)
-            #     self.yp_bez.append(new_point_y)
-            #     self.xp_bez.append(new_point_x)
-            #     self.yp_bez.append(new_point_y)
-            #
-            #     self.xp_bez.append(self.xp[self.pnt_cnt - 3] / 2 + self.xp[
-            #         self.pnt_cnt - 2] / 2)
-            #     self.yp_bez.append(self.yp[self.pnt_cnt - 3] / 2 + self.yp[
-            #         self.pnt_cnt - 2] / 2)
-            #
-            #     self.xp_bez.append(self.xp[self.pnt_cnt - 2])
-            #     self.yp_bez.append(self.yp[self.pnt_cnt - 2])
-            #
-            #     self.xp_bez.append(self.xp[self.pnt_cnt - 1])
-            #     self.yp_bez.append(self.yp[self.pnt_cnt - 1])
-            #
-            #     second_segment = list()
-            #     for i in range(self.cnt - 4, self.cnt):
-            #         second_segment.append([self.xp_bez[i], self.yp_bez[i]])
-            #
-            #     self.segments.append(first_segment)
-            #     self.segments.append(second_segment)
-            #
-            # self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
-            # self.update_points_and_curve_2d()
-            # self.canvas.draw()
-            # print(self.segments)
-
-    def calcBezierControlPoints(self):
-
-        self.pnt_cnt += 1
-
-        if self.seg_count == 0:
-            if self.pnt_cnt == 1 or self.pnt_cnt == 2:
-                self.xp_bez.append(self.xp[self.pnt_cnt - 1])
-                self.yp_bez.append(self.yp[self.pnt_cnt - 1])
-            elif self.pnt_cnt == 3:
-                self.xp_bez.append((self.xp[1] + self.xp[2]) / 2)
-                self.yp_bez.append((self.yp[1] + self.yp[2]) / 2)
-            else:
-                self.xp_bez.append(
-                    self.xp[self.pnt_cnt - 3] / 4 + 7 * self.xp[
-                        self.pnt_cnt - 2] / 12 + self.xp[self.pnt_cnt - 1] / 6)
-                self.yp_bez.append(
-                    self.yp[self.pnt_cnt - 3] / 4 + 7 * self.yp[
-                        self.pnt_cnt - 2] / 12 + self.yp[self.pnt_cnt - 1] / 6)
-                new_segment = list()
-
-                for i in range(self.cnt, self.cnt + 4):
-                    new_segment.append([self.xp_bez[i], self.yp_bez[i]])
-                self.segments.append(new_segment)
-                # print self.segments
-                self.seg_count += 1
-                self.cnt += 4
-
-        else:
-            self.xp_bez.append(self.xp_bez[self.cnt - 1])
-            self.yp_bez.append(self.yp_bez[self.cnt - 1])
-            self.xp_bez.append(self.xp[self.pnt_cnt - 2] / 3 + 2 * self.xp[
-                self.pnt_cnt - 3] / 3)
-            self.yp_bez.append(self.yp[self.pnt_cnt - 2] / 3 + 2 * self.yp[
-                self.pnt_cnt - 3] / 3)
-            self.xp_bez.append(self.xp[self.pnt_cnt - 3] / 3 + 2 * self.xp[
-                self.pnt_cnt - 2] / 3)
-            self.yp_bez.append(self.yp[self.pnt_cnt - 3] / 3 + 2 * self.yp[
-                self.pnt_cnt - 2] / 3)
-            self.xp_bez.append(
-                self.xp[self.pnt_cnt - 3] / 6 + 4 * self.xp[
-                    self.pnt_cnt - 2] / 6 + self.xp[self.pnt_cnt - 1] / 6)
-            self.yp_bez.append(
-                self.yp[self.pnt_cnt - 3] / 6 + 4 * self.yp[
-                    self.pnt_cnt - 2] / 6 + self.yp[self.pnt_cnt - 1] / 6)
-            new_segment = list()
-            for i in range(self.cnt, self.cnt + 4):
-                new_segment.append([self.xp_bez[i], self.yp_bez[i]])
-            self.segments.append(new_segment)
-            self.cnt += 4
-            print(self.segments[self.seg_count])
-            self.seg_count += 1
-        self.update_points_and_curve_2d()
-
 
 if __name__ == '__main__':
     fig = plt.figure(facecolor='white')
