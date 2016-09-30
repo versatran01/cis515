@@ -8,41 +8,103 @@ from project1.bezier import (BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
 
 
-
-
 def deboor_to_bezier(points, last_point=False):
-    points = np.array(points)
-    return []
+    b_points = []
+    d_points = np.array(points)
+    num_dp = len(d_points)
+    for i in range(len(d_points)):
+        print(i)
+        curr_point = d_points[i]
+        if i == 0 or i == 1:
+            b_points.append(curr_point)
+        if i == 2:
+            b_points.append((d_points[i - 1] + curr_point) / 2)
+        if i == 3:
+            b_points.append(d_points[i - 2] / 4 + 7 * d_points[i - 1] / 12 + curr_point / 6)
+        if i >= 4 and last_point:
+            print('in here')
+            if num_dp == 5:
+                b_points.pop()
+                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 + b_points[-1]) / 2)
+                b_points.append(b_points[-1])
+                b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
+                b_points.append(d_points[num_dp - 2])
+                b_points.append(d_points[num_dp - 1])
+
+            if num_dp == 6:
+                b_points.append(b_points[-1])
+                b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
+                b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
+                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 + b_points[-1]) / 2)
+                b_points.append(b_points[-1])
+                b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
+                b_points.append(d_points[num_dp - 2])
+                b_points.append(d_points[num_dp - 1])
+
+
+
+            if i < (num_dp - 2):
+                b_points.append(b_points[-1])
+                b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
+                b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
+                b_points.append(d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
+            elif num_dp >= 7:
+                j = num_dp - 1
+                b_points.append(b_points[-1])
+                b_points.append(2 * d_points[j - 3] / 3 + d_points[j - 2] / 3)
+                b_points.append(2 * d_points[j - 2] / 3 + d_points[j - 3] / 3)
+                b_points.append(1 * d_points[j - 3] / 6 + 7 * d_points[j - 2] / 12 + 1 * d_points[j - 1] / 4)
+                b_points.append(b_points[-1])
+                b_points.append((d_points[j - 2] + d_points[j - 1]) / 2)
+                b_points.append(d_points[j - 1])
+                b_points.append(d_points[j])
+                break
+            else:
+                b_points.append(b_points[-1])
+
+        elif i >= 4:
+            b_points.append(b_points[-1])
+            b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
+            b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
+            b_points.append(d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
+
+    return np.array(b_points)
 
 class DeboorBuilder:
-    def __init__(self, deboor_points):
-        self.ax = ax
-        self.deboor_points = deboor_points
-        self.xp = list(deboor_points.get_xdata())
-        self.yp = list(deboor_points.get_ydata())
-        self.canvas = deboor_points.figure.canvas
-        self.ax = deboor_points.axes
+    def __init__(self, ax_2d):
+        self.ax_2d = ax_2d
+        self.canvas = self.ax_2d.figure.canvas
+
+        self.control_points_style_deboor = {'marker': '+', 'linestyle': '--',
+                                     'markeredgewidth': 2, 'color': 'm'}
+        points_2d_deboor = Line2D([], [], **self.control_points_style_deboor)
+        self.line_points_2d_deboor = self.ax_2d.add_line(points_2d_deboor)
+
+        #deboor control points
+        self.xp = []
+        self.yp = []
+
         self.cid_button_press = self.canvas.mpl_connect('button_press_event',
                                                         self.on_button_press)
+
         self.cid_key_press = self.canvas.mpl_connect('key_press_event',
                                                      self.on_key_press)
-        self.xp_bez = list()
-        self.yp_bez = list()
-        self.pnt_cnt = 0
-        self.cnt = 0
-        self.last_point = False
-        self.marker_on = False
-        self.bezier_poly = Line2D([], [], linestyle='-', marker='o',
-                                  markeredgewidth=2)
-        self.line_bezier_poly = self.ax.add_line(self.bezier_poly)
-        self.control_points = list()
-        self.segments = list()
-        self.seg_count = 0
+        # bezier control points
+        self.xp_bez = []
+        self.yp_bez = []
+
+        self.control_points_style_bezier = {'marker': '+', 'linestyle': '-',
+                                     'markeredgewidth': 2, 'color': 'b'}
+        points_2d_bezier = Line2D([], [], **self.control_points_style_bezier)
+        self.line_points_2d_bezier = self.ax_2d.add_line(points_2d_bezier)
 
         # Bezier curve stuff
         self.bezier_curve_style = {'color': 'r'}
         bezier_curve_2d = Line2D([], [], **self.bezier_curve_style)
-        self.line_bezier_2d = self.ax.add_line(bezier_curve_2d)
+        self.line_bezier_2d = self.ax_2d.add_line(bezier_curve_2d)
+
+        self.marker_on = False
+        self.last_point = False
 
         # Bezier curve method
         self.bezier = BezierSubdivision()
@@ -60,22 +122,26 @@ class DeboorBuilder:
         return np.transpose(curve)
 
     def update_points_and_curve_2d(self):
-        # self.line_points_2d.set_data(self.xp_bez, self.yp_bez)
+        self.line_points_2d_deboor.set_data(self.xp, self.yp)
+        self.line_points_2d_bezier.set_data(self.xp_bez, self.yp_bez)
         self.line_bezier_2d.set_data(
             *self.create_curve(self.xp_bez, self.yp_bez))
 
     def on_button_press(self, event):
 
-        if event.inaxes != self.ax:
+        if event.inaxes != self.ax_2d:
+            return
+        if self.last_point:
             return
 
-        self.pnt_cnt += 1
         self.xp.append(event.xdata)
         self.yp.append(event.ydata)
-        self.deboor_points.set_data(self.xp, self.yp)
-        deboor_to_bezier(list(zip(self.xp,self.yp)),1)
-        #self.calcBezierControlPoints()
-        self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
+        bezier_points = deboor_to_bezier(list(zip(self.xp, self.yp)))
+        print(bezier_points)
+        bezier_points = bezier_points.transpose()
+        self.xp_bez = bezier_points[:][0]
+        self.yp_bez = bezier_points[:][1]
+        self.update_points_and_curve_2d()
         self.canvas.draw()
 
     def on_key_press(self, event):
@@ -83,88 +149,96 @@ class DeboorBuilder:
         :param event:
         :return:
         """
+
         if event.key == ' ':
             self.last_point = True
-
-            if self.pnt_cnt >= 7:
-                for i in range(0, 5):
-                    self.xp_bez.pop()
-                    self.yp_bez.pop()
-
-                old_segment = self.segments.pop()
-                self.cnt -= 5
-                old_segment.pop()
-                self.xp_bez.append(
-                    self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
-                        self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
-                self.yp_bez.append(
-                    self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
-                        self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
-                old_segment.append(
-                    [self.xp_bez[self.cnt], self.yp_bez[self.cnt]])
-                self.segments.append(old_segment)
-                self.xp_bez.append(
-                    self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
-                        self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
-                self.yp_bez.append(
-                    self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
-                        self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
-                self.xp_bez.append(
-                    (self.xp[self.pnt_cnt - 3] + self.xp[self.pnt_cnt - 2]) / 2)
-                self.yp_bez.append(
-                    (self.yp[self.pnt_cnt - 3] + self.yp[self.pnt_cnt - 2]) / 2)
-                self.xp_bez.append(self.xp[self.pnt_cnt - 2])
-                self.yp_bez.append(self.yp[self.pnt_cnt - 2])
-                self.xp_bez.append(self.xp[self.pnt_cnt - 1])
-                self.yp_bez.append(self.yp[self.pnt_cnt - 1])
-
-                new_segment = list()
-                for i in range(self.cnt + 1, self.cnt + 5):
-                    new_segment.append([self.xp_bez[i], self.yp_bez[i]])
-
-                self.segments.append(new_segment)
-
-            elif self.pnt_cnt == 5 or self.pnt_cnt == 6:
-                for i in range(0, 5):
-                    self.xp_bez.pop()
-                    self.yp_bez.pop()
-
-                self.segments.pop()
-                first_segment = self.segments.pop()
-                first_segment.pop()
-
-                new_point_x = (self.xp[self.pnt_cnt - 3] / 2 + self.xp[
-                    self.pnt_cnt - 2] / 2 + first_segment[2][0]) / 2
-                new_point_y = (self.yp[self.pnt_cnt - 3] / 2 + self.yp[
-                    self.pnt_cnt - 2] / 2 + first_segment[2][1]) / 2
-                first_segment.append([new_point_x, new_point_y])
-                self.xp_bez.append(new_point_x)
-                self.yp_bez.append(new_point_y)
-                self.xp_bez.append(new_point_x)
-                self.yp_bez.append(new_point_y)
-
-                self.xp_bez.append(self.xp[self.pnt_cnt - 3] / 2 + self.xp[
-                    self.pnt_cnt - 2] / 2)
-                self.yp_bez.append(self.yp[self.pnt_cnt - 3] / 2 + self.yp[
-                    self.pnt_cnt - 2] / 2)
-
-                self.xp_bez.append(self.xp[self.pnt_cnt - 2])
-                self.yp_bez.append(self.yp[self.pnt_cnt - 2])
-
-                self.xp_bez.append(self.xp[self.pnt_cnt - 1])
-                self.yp_bez.append(self.yp[self.pnt_cnt - 1])
-
-                second_segment = list()
-                for i in range(self.cnt - 4, self.cnt):
-                    second_segment.append([self.xp_bez[i], self.yp_bez[i]])
-
-                self.segments.append(first_segment)
-                self.segments.append(second_segment)
-
-            self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
+            bezier_points = deboor_to_bezier(list(zip(self.xp, self.yp)), True)
+            print(bezier_points)
+            bezier_points = bezier_points.transpose()
+            self.xp_bez = bezier_points[:][0]
+            self.yp_bez = bezier_points[:][1]
             self.update_points_and_curve_2d()
             self.canvas.draw()
-            print(self.segments)
+
+            # if self.pnt_cnt >= 7:
+            #     for i in range(0, 5):
+            #         self.xp_bez.pop()
+            #         self.yp_bez.pop()
+            #
+            #     old_segment = self.segments.pop()
+            #     self.cnt -= 5
+            #     old_segment.pop()
+            #     self.xp_bez.append(
+            #         self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
+            #             self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
+            #     self.yp_bez.append(
+            #         self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
+            #             self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
+            #     old_segment.append(
+            #         [self.xp_bez[self.cnt], self.yp_bez[self.cnt]])
+            #     self.segments.append(old_segment)
+            #     self.xp_bez.append(
+            #         self.xp[self.pnt_cnt - 4] / 6 + 7 * self.xp[
+            #             self.pnt_cnt - 3] / 12 + self.xp[self.pnt_cnt - 2] / 4)
+            #     self.yp_bez.append(
+            #         self.yp[self.pnt_cnt - 4] / 6 + 7 * self.yp[
+            #             self.pnt_cnt - 3] / 12 + self.yp[self.pnt_cnt - 2] / 4)
+            #     self.xp_bez.append(
+            #         (self.xp[self.pnt_cnt - 3] + self.xp[self.pnt_cnt - 2]) / 2)
+            #     self.yp_bez.append(
+            #         (self.yp[self.pnt_cnt - 3] + self.yp[self.pnt_cnt - 2]) / 2)
+            #     self.xp_bez.append(self.xp[self.pnt_cnt - 2])
+            #     self.yp_bez.append(self.yp[self.pnt_cnt - 2])
+            #     self.xp_bez.append(self.xp[self.pnt_cnt - 1])
+            #     self.yp_bez.append(self.yp[self.pnt_cnt - 1])
+            #
+            #     new_segment = list()
+            #     for i in range(self.cnt + 1, self.cnt + 5):
+            #         new_segment.append([self.xp_bez[i], self.yp_bez[i]])
+            #
+            #     self.segments.append(new_segment)
+            #
+            # elif self.pnt_cnt == 5 or self.pnt_cnt == 6:
+            #     for i in range(0, 5):
+            #         self.xp_bez.pop()
+            #         self.yp_bez.pop()
+            #
+            #     self.segments.pop()
+            #     first_segment = self.segments.pop()
+            #     first_segment.pop()
+            #
+            #     new_point_x = (self.xp[self.pnt_cnt - 3] / 2 + self.xp[
+            #         self.pnt_cnt - 2] / 2 + first_segment[2][0]) / 2
+            #     new_point_y = (self.yp[self.pnt_cnt - 3] / 2 + self.yp[
+            #         self.pnt_cnt - 2] / 2 + first_segment[2][1]) / 2
+            #     first_segment.append([new_point_x, new_point_y])
+            #     self.xp_bez.append(new_point_x)
+            #     self.yp_bez.append(new_point_y)
+            #     self.xp_bez.append(new_point_x)
+            #     self.yp_bez.append(new_point_y)
+            #
+            #     self.xp_bez.append(self.xp[self.pnt_cnt - 3] / 2 + self.xp[
+            #         self.pnt_cnt - 2] / 2)
+            #     self.yp_bez.append(self.yp[self.pnt_cnt - 3] / 2 + self.yp[
+            #         self.pnt_cnt - 2] / 2)
+            #
+            #     self.xp_bez.append(self.xp[self.pnt_cnt - 2])
+            #     self.yp_bez.append(self.yp[self.pnt_cnt - 2])
+            #
+            #     self.xp_bez.append(self.xp[self.pnt_cnt - 1])
+            #     self.yp_bez.append(self.yp[self.pnt_cnt - 1])
+            #
+            #     second_segment = list()
+            #     for i in range(self.cnt - 4, self.cnt):
+            #         second_segment.append([self.xp_bez[i], self.yp_bez[i]])
+            #
+            #     self.segments.append(first_segment)
+            #     self.segments.append(second_segment)
+            #
+            # self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
+            # self.update_points_and_curve_2d()
+            # self.canvas.draw()
+            # print(self.segments)
 
     def calcBezierControlPoints(self):
 
@@ -221,13 +295,10 @@ class DeboorBuilder:
 
 
 if __name__ == '__main__':
-    # Initial setup
-    fig, ax = plt.subplots()
-
-    line = Line2D([], [],
-                  linestyle='--', marker='+', markeredgewidth=2)
-    ax.add_line(line)
-
-    deboor_builder = DeboorBuilder(line)
+    fig = plt.figure(facecolor='white')
+    ax = fig.add_subplot(111)
+    ax.set_aspect('equal')
+    # Create DeboorBuilder
+    deboor_builder = DeboorBuilder(ax)
 
     plt.show()
