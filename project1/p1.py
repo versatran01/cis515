@@ -6,8 +6,11 @@ from project1.bezier_builder import BezierBuilder2D
 from project1.bezier import (BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
 
-class DeboorBuilder:
 
+
+
+
+class DeboorBuilder:
     def __init__(self, deboor_points):
         self.ax = ax
         self.deboor_points = deboor_points
@@ -59,10 +62,12 @@ class DeboorBuilder:
 
         if event.inaxes != self.ax:
             return
+        self.pnt_cnt += 1
         self.xp.append(event.xdata)
         self.yp.append(event.ydata)
         self.deboor_points.set_data(self.xp, self.yp)
-        self.calcBezierControlPoints()
+        deboor_to_bezier(list(zip(self.xp,self.yp)),1)
+        #self.calcBezierControlPoints()
         self.bezier_poly.set_data(self.xp_bez, self.yp_bez)
         self.canvas.draw()
 
