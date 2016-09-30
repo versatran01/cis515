@@ -1,5 +1,4 @@
 import numpy as np
-from warnings import warn
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from mpl_toolkits.mplot3d.art3d import Line3D
@@ -7,7 +6,7 @@ from project1.bezier import (BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
 
 
-class BezierBuilder2D:
+class BezierBuilder2D(object):
     def __init__(self, ax_2d):
         self.marker_on = False
 
@@ -76,35 +75,6 @@ class BezierBuilder2D:
             else:
                 marker = ''
             self.set_curve_marker(marker)
-        else:
-            try:
-                # TODO: also change 3d
-                bezier_type = int(event.key)
-                # only redraw if it's a different type
-                if bezier_type > 3:
-                    warn("not a valid bezier type")
-                elif bezier_type != self.bezier_type:
-                    if bezier_type == 1:
-                        self.bezier = BezierBernstein(num=self.num)
-                        self.line_bezier_2d.set_color('r')
-                        self.ax_2d.set_title('Bernstein')
-                    elif bezier_type == 2:
-                        self.bezier = BezierDeCasteljau(num=self.num)
-                        self.line_bezier_2d.set_color('g')
-                        self.ax_2d.set_title('DeCasteljau')
-                    elif bezier_type == 3:
-                        self.bezier = BezierSubdivision(depth=self.depth)
-                        self.line_bezier_2d.set_color('b')
-                        self.ax_2d.set_title('Subdivision')
-                    else:
-                        pass
-
-                    self.bezier_type = bezier_type
-                    if len(self.points_x) > 0:
-                        self.update_points_and_curve_2d()
-
-            except ValueError:
-                pass
 
         self.canvas.draw()
 
@@ -114,7 +84,8 @@ class BezierBuilder2D:
 
 class BezierBuilder3D(BezierBuilder2D):
     def __init__(self, ax_2d, ax_3d):
-        super().__init__(ax_2d)
+        super(BezierBuilder3D, self).__init__(ax_2d)
+        # super().__init__(ax_2d)
 
         self.ax_3d = ax_3d
 
@@ -183,7 +154,8 @@ class BezierBuilder3D(BezierBuilder2D):
             return
 
         # Call super class method to handle drawing in 2d
-        super().on_button_press(event)
+        super(BezierBuilder3D, self).on_button_press(event)
+        # super().on_button_press(event)
 
         # Remember where we pressed
         self.press_xy = event.xdata, event.ydata
