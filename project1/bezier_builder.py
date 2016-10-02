@@ -30,7 +30,7 @@ class BezierBuilder2D(object):
         self.bezier = BezierSubdivision()
         self.bezier_type = 3
         self.num = 256
-        self.depth = 6
+        self.divide = 6
 
         # Event handler for mouse clicking
         self.cid_button_press = self.canvas.mpl_connect('button_press_event',
