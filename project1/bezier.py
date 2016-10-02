@@ -46,7 +46,7 @@ class BezierDeCasteljau(BezierBase):
 
     def create_curve(self, points):
         points = np.array(points, float)
-        curve = np.zeros((self.num, 2))
+        curve = np.empty((self.num, len(points[0])))
         for i, t in enumerate(self.ts):
             curve[i] = de_casteljau(points, t)
         return curve

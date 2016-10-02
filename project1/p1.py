@@ -1,6 +1,5 @@
-from __future__ import print_function
+from __future__ import (print_function, division)
 import numpy as np
-from scipy.special import binom
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from project1.bezier_builder import BezierBuilder2D
@@ -20,12 +19,14 @@ def deboor_to_bezier(points, last_point=False):
         if i == 2:
             b_points.append((d_points[i - 1] + curr_point) / 2)
         if i == 3:
-            b_points.append(d_points[i - 2] / 4 + 7 * d_points[i - 1] / 12 + curr_point / 6)
+            b_points.append(
+                d_points[i - 2] / 4 + 7 * d_points[i - 1] / 12 + curr_point / 6)
         if i >= 4 and last_point:
             print('in here')
             if num_dp == 5:
                 b_points.pop()
-                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 + b_points[-1]) / 2)
+                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 +
+                                 b_points[-1]) / 2)
                 b_points.append(b_points[-1])
                 b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
                 b_points.append(d_points[num_dp - 2])
@@ -37,7 +38,8 @@ def deboor_to_bezier(points, last_point=False):
                 b_points.append(b_points[-1])
                 b_points.append(d_points[j - 1] / 3 + 2 * d_points[j - 2] / 3)
                 b_points.append(d_points[j - 2] / 3 + 2 * d_points[j - 1] / 3)
-                b_points.append(((d_points[j] + d_points[j - 1]) / 2 + b_points[-1]) / 2)
+                b_points.append(
+                    ((d_points[j] + d_points[j - 1]) / 2 + b_points[-1]) / 2)
                 # b_points.append(b_points[-1])
                 b_points.append((d_points[j] + d_points[j - 1]) / 2)
                 b_points.append(d_points[num_dp - 2])
@@ -48,13 +50,16 @@ def deboor_to_bezier(points, last_point=False):
                 b_points.append(b_points[-1])
                 b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
                 b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
-                b_points.append(d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
+                b_points.append(d_points[i - 2] / 6 + 4 * d_points[
+                    i - 1] / 6 + curr_point / 6)
             elif num_dp >= 7:
                 j = num_dp - 1
                 b_points.append(b_points[-1])
                 b_points.append(2 * d_points[j - 3] / 3 + d_points[j - 2] / 3)
                 b_points.append(2 * d_points[j - 2] / 3 + d_points[j - 3] / 3)
-                b_points.append(1 * d_points[j - 3] / 6 + 7 * d_points[j - 2] / 12 + 1 * d_points[j - 1] / 4)
+                b_points.append(
+                    1 * d_points[j - 3] / 6 + 7 * d_points[j - 2] / 12 + 1 *
+                    d_points[j - 1] / 4)
                 b_points.append(b_points[-1])
                 b_points.append((d_points[j - 2] + d_points[j - 1]) / 2)
                 b_points.append(d_points[j - 1])
@@ -67,7 +72,8 @@ def deboor_to_bezier(points, last_point=False):
             b_points.append(b_points[-1])
             b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
             b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
-            b_points.append(d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
+            b_points.append(
+                d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
 
     return np.array(b_points)
 
@@ -78,11 +84,11 @@ class DeboorBuilder:
         self.canvas = self.ax_2d.figure.canvas
 
         self.control_points_style_deboor = {'marker': '+', 'linestyle': '--',
-                                     'markeredgewidth': 2, 'color': 'm'}
+                                            'markeredgewidth': 2, 'color': 'm'}
         points_2d_deboor = Line2D([], [], **self.control_points_style_deboor)
         self.line_points_2d_deboor = self.ax_2d.add_line(points_2d_deboor)
 
-        #deboor control points
+        # deboor control points
         self.xp = []
         self.yp = []
 
@@ -96,7 +102,7 @@ class DeboorBuilder:
         self.yp_bez = []
 
         self.control_points_style_bezier = {'marker': '+', 'linestyle': '-',
-                                     'markeredgewidth': 2, 'color': 'b'}
+                                            'markeredgewidth': 2, 'color': 'b'}
         points_2d_bezier = Line2D([], [], **self.control_points_style_bezier)
         self.line_points_2d_bezier = self.ax_2d.add_line(points_2d_bezier)
 
@@ -160,6 +166,7 @@ class DeboorBuilder:
             self.yp_bez = bezier_points[:][1]
             self.update_points_and_curve_2d()
             self.canvas.draw()
+
 
 if __name__ == '__main__':
     fig = plt.figure(facecolor='white')
