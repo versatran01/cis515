@@ -54,20 +54,24 @@ class BezierDeCasteljau(BezierBase):
 
 def subdivision(points, depth=6, t=0.5):
     curve = subdivision_rec(points, depth, t=t)
-    curve_full = [points[0]] + curve + [points[-1]]
+    curve_full = curve + [points[-1]]
+    curve_full = np.vstack(curve_full)
     return np.array(curve_full)
 
 
-def subdivision_rec(points, depth, t=0.5):
+def subdivision_rec(points, divide, t=0.5):
     """
     Recursive version of the subdivision algorithm
     :param points: control points
-    :param depth:
+    :param divide:
     :param t:
     :return:
     """
     # make a copy of points since we will modify them later
     points = np.array(points)
+    if divide == 0:
+        return [points[:-1]]
+
     n = len(points)  # number of points
     d = len(points[0])  # dimension
     m = n - 1  # degree of polynomial
@@ -89,10 +93,8 @@ def subdivision_rec(points, depth, t=0.5):
     # flip lower to ensure correct sequence
     lower = np.flipud(lower)
 
-    if depth == 0:
-        return [bm]
-    return subdivision_rec(upper, depth - 1) + [bm] \
-           + subdivision_rec(lower, depth - 1)
+    return subdivision_rec(upper, divide - 1) \
+           + subdivision_rec(lower, divide - 1)
 
 
 class BezierSubdivision(BezierBase):
