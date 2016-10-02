@@ -20,13 +20,13 @@ def deboor_to_bezier(points, last_point=False):
             b_points.append((d_points[i - 1] + curr_point) / 2)
         if i == 3:
             b_points.append(
-                d_points[i - 2] / 4 + 7 * d_points[i - 1] / 12 + curr_point / 6)
+                d_points[i - 2] / 4.0 + 7 * d_points[i - 1] / 12.0 + curr_point / 6.0)
         if i >= 4 and last_point:
             print('in here')
             if num_dp == 5:
                 b_points.pop()
-                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2 +
-                                 b_points[-1]) / 2)
+                b_points.append(((d_points[i - 1] + d_points[i - 2]) / 2.0 +
+                                 b_points[-1]) / 2.0)
                 b_points.append(b_points[-1])
                 b_points.append((d_points[i - 1] + d_points[i - 2]) / 2)
                 b_points.append(d_points[num_dp - 2])

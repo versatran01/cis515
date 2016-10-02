@@ -47,6 +47,12 @@ class BezierBuilder2D(object):
         curve = self.bezier.create_curve(list(zip(*args)))
         return np.transpose(curve)
 
+    def reset(self):
+        self.points_x = []
+        self.points_y = []
+        self.line_bezier_2d.set_data([], [])
+        self.line_points_2d.set_data([], [])
+
     def update_points_and_curve_2d(self):
         self.line_points_2d.set_data(self.points_x, self.points_y)
         self.line_bezier_2d.set_data(
@@ -75,6 +81,8 @@ class BezierBuilder2D(object):
             else:
                 marker = ''
             self.set_curve_marker(marker)
+        elif event.key == 'r':
+            self.reset()
 
         self.canvas.draw()
 
@@ -145,7 +153,8 @@ class BezierBuilder3D(BezierBuilder2D):
         self.canvas.draw()
 
     def set_curve_marker(self, marker):
-        self.line_bezier_2d.set_marker(marker)
+        super(BezierBuilder3D, self).set_curve_marker(marker)
+
         self.line_bezier_3d.set_marker(marker)
 
     def on_button_press(self, event):
@@ -161,6 +170,13 @@ class BezierBuilder3D(BezierBuilder2D):
         self.press_xy = event.xdata, event.ydata
         # Save background
         self.background_2d = self.canvas.copy_from_bbox(self.ax_2d.bbox)
+
+    def reset(self):
+        super(BezierBuilder3D, self).reset()
+
+        self.points_z = []
+        self.update_line3d(self.line_points_3d, [], [], [])
+        self.update_line3d(self.line_bezier_3d, [], [], [])
 
     def update_points_and_curve_3d(self):
         self.update_line3d(self.line_points_3d,
