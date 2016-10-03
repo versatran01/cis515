@@ -1,6 +1,7 @@
 from __future__ import (print_function, division)
 import sys
 import os
+
 sys.path.append(os.path.abspath('..'))
 
 import numpy as np
@@ -25,7 +26,8 @@ def deboor_to_bezier(points, last_point=False):
             b_points.append((d_points[i - 1] + curr_point) / 2)
         if i == 3:
             b_points.append(
-                d_points[i - 2] / 4.0 + 7 * d_points[i - 1] / 12.0 + curr_point / 6.0)
+                d_points[i - 2] / 4.0 + 7 * d_points[
+                    i - 1] / 12.0 + curr_point / 6.0)
             segments.append(b_points[:4])
 
         if i >= 4 and last_point:
@@ -88,7 +90,8 @@ def deboor_to_bezier(points, last_point=False):
             b_points.append(b_points[-1])
             b_points.append(d_points[i - 1] / 3 + 2 * d_points[i - 2] / 3)
             b_points.append(d_points[i - 2] / 3 + 2 * d_points[i - 1] / 3)
-            b_points.append(d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
+            b_points.append(
+                d_points[i - 2] / 6 + 4 * d_points[i - 1] / 6 + curr_point / 6)
             segments.append(b_points[-4:])
 
     return np.array(b_points), np.array(segments)
@@ -117,7 +120,7 @@ class DeboorBuilder:
         self.xp_bez = []
         self.yp_bez = []
 
-        #segments
+        # segments
         self.segments = []
 
         self.control_points_style_bezier = {'marker': '+', 'linestyle': '-',
@@ -167,11 +170,13 @@ class DeboorBuilder:
 
         seg = self.segments[-1]
         if self.last_point:
-            self.line_bezier_2d[-1].set_data(*self.create_curve(seg[:, 0], seg[:, 1]))
+            self.line_bezier_2d[-1].set_data(
+                *self.create_curve(seg[:, 0], seg[:, 1]))
             self.ax_2d.lines[-3].remove()
         else:
             new_curve = self.create_curve(seg[:, 0], seg[:, 1])
-            bezier_curve_2d = Line2D(new_curve[0], new_curve[1], **self.bezier_curve_style)
+            bezier_curve_2d = Line2D(new_curve[0], new_curve[1],
+                                     **self.bezier_curve_style)
             self.line_bezier_2d.append(self.ax_2d.add_line(bezier_curve_2d))
 
     def on_button_press(self, event):
@@ -183,9 +188,10 @@ class DeboorBuilder:
 
         self.xp.append(event.xdata)
         self.yp.append(event.ydata)
-        bezier_points, self.segments = deboor_to_bezier(list(zip(self.xp, self.yp)))
+        bezier_points, self.segments = deboor_to_bezier(
+            list(zip(self.xp, self.yp)))
         bezier_points = bezier_points.transpose()
-        #self.segments = deboor_to_bezier(list(zip(self.xp, self.yp)))
+        # self.segments = deboor_to_bezier(list(zip(self.xp, self.yp)))
         self.xp_bez = bezier_points[0]
         self.yp_bez = bezier_points[1]
         #
@@ -200,12 +206,14 @@ class DeboorBuilder:
         """
         if event.key == ' ':
             self.last_point = True
-            bezier_points, self.segments = deboor_to_bezier(list(zip(self.xp, self.yp)), True)
+            bezier_points, self.segments = deboor_to_bezier(
+                list(zip(self.xp, self.yp)), True)
             bezier_points = bezier_points.transpose()
             self.xp_bez = bezier_points[0]
             self.yp_bez = bezier_points[1]
             self.update_points_and_curve_2d()
             self.canvas.draw()
+
 
 if __name__ == '__main__':
     fig = plt.figure(facecolor='white')
