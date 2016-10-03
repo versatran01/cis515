@@ -133,7 +133,8 @@ class BezierBuilder3D(BezierBuilder2D):
         # Speed update drawing (only draw the circle)
         self.canvas.restore_region(self.background_2d)
         self.ax_2d.draw_artist(self.patch_circle)
-        self.canvas.blit(self.ax_2d.bbox)
+        #self.canvas.blit(self.ax_2d.bbox)
+
 
     def on_button_release(self, event):
         if event.inaxes != self.ax_2d:
