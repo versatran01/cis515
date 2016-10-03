@@ -12,6 +12,9 @@ class BezierBase:
 
 
 def bernstein(n, k, t):
+    """
+    Bernstein polynomial value at t
+    """
     return binom(n, k) * (t ** k) * ((1 - t) ** (n - k))
 
 
@@ -26,8 +29,8 @@ class BezierBernstein(BezierBase):
     def create_curve(self, points):
         """
         Creating Bezier curve using Bernstein polynomials
-        :param points:
-        :return:
+        :param points: control points
+        :return: points on Bezier curve
         """
         n = len(points)
         d = len(points[0])
@@ -43,8 +46,8 @@ def de_casteljau(points, t):
     """
     De Casteljau algorithm
     :param points: control points
-    :param t:
-    :return:
+    :param t: interpolation value
+    :return: interpolated point on Bezier curve
     """
     n = len(points)  # number of control points
     m = n - 1  # polynomial degree
@@ -127,6 +130,9 @@ def subdiv_rec(points, divide, t):
 
 class BezierSubdivision(BezierBase):
     def __init__(self, divide=6):
+        """
+        :param divide: number of times to subdivide
+        """
         self.divide = divide
 
     def create_curve(self, points):

@@ -78,9 +78,10 @@ def deboor_ith(points):
 def deboor_to_bezier(points, last_point=False):
     """
     Convert de Boor control points to list of Bezier control points
-    Given N de Boor control points, this function will return N-3 segments of
-    Bezier control points. Each segment consists of 4 Bezier control points.
-    When N is less then 4, returns empty list.
+    Given N de Boor control points, this function will return N-m (m=3)
+    segments of Bezier control points.
+    Each segment consists of m+1 (m=3) Bezier control points.
+    When N is less then m+1 (m=3), returns empty list.
     :param points: de Boor control points
     :param last_point: indicate whether this is the last control points
     :return: segments of bezier control points
@@ -108,11 +109,11 @@ def deboor_to_bezier(points, last_point=False):
     # fix segments when last point
     if last_point:
         if n == 5:
-            # Modify both segments
+            # Modify last two segments, in this case there are only two
             segments[0] = deboor_1st(points[:w], t=0.5)
             segments[1] = deboor_1st(points[1:1 + w], t=0.5, flip=True)
         if n == 6:
-            # Modify last two segments
+            # Modify last two segments, in this case there are only three
             segments[1] = deboor_2nd(points[1:1 + w], t=0.5)
             segments[2] = deboor_1st(points[2:2 + w], t=1 / 3.0, flip=True)
         if n >= 7:
@@ -129,6 +130,9 @@ class DeBoor:
 
 
 def deboor_to_bezier_old(points, last_point=False):
+    """
+    Old dboor_to_beizer
+    """
     b_points = []
     d_points = np.array(points)
     num_dp = len(d_points)
