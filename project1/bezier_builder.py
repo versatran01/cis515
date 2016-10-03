@@ -28,8 +28,6 @@ class BezierBuilder2D(object):
 
         # Bezier curve method
         self.bezier = BezierSubdivision()
-        self.bezier_type = 3
-        self.num = 256
         self.divide = 6
 
         # Event handler for mouse clicking
