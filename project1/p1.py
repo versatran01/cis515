@@ -54,7 +54,7 @@ def deboor_to_bezier(points, last_point=False):
                 b_points.append((d_points[j] + d_points[j - 1]) / 2)
                 b_points.append(d_points[num_dp - 2])
                 b_points.append(d_points[num_dp - 1])
-
+                segments.pop()
                 segments.append(b_points[:4])
                 segments.append(b_points[-8:-4])
                 segments.append(b_points[-4:])
@@ -155,14 +155,12 @@ class DeboorBuilder:
         if len(self.segments) == 0:
             return
 
-        if self.last_point and len(self.segments) != 4:
+        if self.last_point:
             self.line_bezier_2d.pop(-3)
-            # print (self.segments)
 
         for line, seg in zip(self.line_bezier_2d, self.segments[:-1]):
-            if self.last_point:
-                print(line)
-                print(seg)
+            # if self.last_point:
+
             line.set_data(*self.create_curve(seg[:, 0], seg[:, 1]))
 
         seg = self.segments[-1]
