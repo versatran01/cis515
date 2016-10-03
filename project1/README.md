@@ -2,24 +2,29 @@
 
 ## Video
 
+[link to video]
 
 ## Requirements
 
 * python 2.7/3.5
 * numpy, scipy, matplotlib
 
-## General Key-bindings
+## How to run the code
+### General Key-bindings
 
 * `t` - toggle marker of curve
 * `r` - reset plot
 
-## Problem 1:
+### Problem 1:
 
-For the first problem execute `p1.py`.
+Run `p1.py` by
+```
+python p1.py
+```
 
-Press the `space` key to end the spline after you have 5 or more deboor control points.
+Press `space` key to end the spline after you have 5 or more deboor control points.
 
-## Problem 2:
+### Problem 2:
 
 Run `p2.py` by
 ```
