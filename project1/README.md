@@ -37,3 +37,22 @@ Run `p2_3d.py` by
 python p2_3d.py
 ```
 to plot Bezier curve in 3d. After click a point, hold and drag the mouse around, you will see a circle. The radius of the circle will be the `z` coordinate of this control point.
+
+
+### Implementation details
+All methods related to Bezier curves are in module `bezier.py`. 
+
+We implemented 3 different classes for generating Bezier curve.
+They are 
+* `BezierBernstein`
+* `BezierDeCasteljau`
+* `BezierSubdivision`
+
+
+Methods related to interactive plotting are in module `bezier_builder.py`
+They are
+* `BezierBuilder2D`
+* `BezierBuilder3D`
+
+
+

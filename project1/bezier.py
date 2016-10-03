@@ -4,6 +4,10 @@ from scipy.special import binom
 
 class BezierBase:
     def create_curve(self, points):
+        """
+        Interface for generating Bezier curve
+        :param points: control points
+        """
         raise NotImplementedError
 
 
@@ -14,12 +18,17 @@ def bernstein(n, k, t):
 class BezierBernstein(BezierBase):
     def __init__(self, num=256):
         """
-        :param num: number of samples for the entire curve
+        :param num: number of samples
         """
         self.num = num
         self.ts = np.linspace(0, 1, num)
 
     def create_curve(self, points):
+        """
+        Creating Bezier curve using Bernstein polynomials
+        :param points:
+        :return:
+        """
         n = len(points)
         d = len(points[0])
         m = n - 1
@@ -31,6 +40,12 @@ class BezierBernstein(BezierBase):
 
 
 def de_casteljau(points, t):
+    """
+    De Casteljau algorithm
+    :param points: control points
+    :param t:
+    :return:
+    """
     n = len(points)  # number of control points
     m = n - 1  # polynomial degree
     for k in range(m):
@@ -41,10 +56,18 @@ def de_casteljau(points, t):
 
 class BezierDeCasteljau(BezierBase):
     def __init__(self, num=256):
+        """
+        :param num: number of samples
+        """
         self.num = num
         self.ts = np.linspace(0, 1, num)
 
     def create_curve(self, points):
+        """
+        Creating Bezier curve using De Casteljau algorithm
+        :param points: control points
+        :return: points on Bezier curve
+        """
         points = np.array(points, float)
         curve = np.empty((self.num, len(points[0])))
         for i, t in enumerate(self.ts):
@@ -52,20 +75,27 @@ class BezierDeCasteljau(BezierBase):
         return curve
 
 
-def subdivision(points, depth=6, t=0.5):
-    curve = subdiv_rec(points, depth, t=t)
+def subdivision(points, divide=6, t=0.5):
+    """
+    Subdivision version of De Casteljau algorithm
+    :param points: control points
+    :param divide: number of times the algorithm divide
+    :param t: where to divide default is 0.5
+    :return: all control points as numpy.array
+    """
+    curve = subdiv_rec(points, divide, t)
     curve_full = curve + [points[-1]]  # Add the last point
     curve_full = np.vstack(curve_full)
     return np.array(curve_full)
 
 
-def subdiv_rec(points, divide, t=0.5):
+def subdiv_rec(points, divide, t):
     """
     Recursive version of the subdivision algorithm
     :param points: control points
-    :param divide: number of times the algorithm divides
+    :param divide: number of times this step divides
     :param t: where to divide
-    :return:
+    :return: list of control points
     """
     # make a copy of points since we will modify them later
     points = np.array(points)
@@ -82,7 +112,7 @@ def subdiv_rec(points, divide, t=0.5):
 
     for k in range(m):
         ud[k] = points[0]
-        # To ensure correct sequence, lower are assembled backwards
+        # To ensure correct sequence, ld are assembled backwards
         ld[m - k] = points[m - k]
 
         for i in range(m - k):
@@ -92,7 +122,7 @@ def subdiv_rec(points, divide, t=0.5):
     ud[-1] = points[0]
     ld[0] = points[0]
 
-    return subdiv_rec(ud, divide - 1) + subdiv_rec(ld, divide - 1)
+    return subdiv_rec(ud, divide - 1, t) + subdiv_rec(ld, divide - 1, t)
 
 
 class BezierSubdivision(BezierBase):
@@ -100,6 +130,11 @@ class BezierSubdivision(BezierBase):
         self.divide = divide
 
     def create_curve(self, points):
+        """
+        Creating Bezier curve using subdivision algorithm
+        :param points: control points
+        :return: points on Bezier curve
+        """
         points = np.array(points)
         curve = subdivision(points, self.divide)
         return curve
