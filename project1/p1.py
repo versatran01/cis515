@@ -12,6 +12,7 @@ from project1.bezier import (BezierBernstein, BezierDeCasteljau,
                              BezierSubdivision)
 
 
+
 def deboor_to_bezier(points, last_point=False):
     b_points = []
     d_points = np.array(points)
