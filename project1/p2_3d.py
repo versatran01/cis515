@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath('..'))
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from project1.bezier_builder import BezierBuilder3D
