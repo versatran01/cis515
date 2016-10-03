@@ -2,7 +2,11 @@
 
 ## Video
 
-[link to video]
+B-spline and Bezier Curve
+https://www.youtube.com/watch?v=Lyj-4JJX70Q
+
+Bezier Curve 3D
+https://www.youtube.com/watch?v=pIlueSqXc1k
 
 ## Requirements
 
@@ -40,19 +44,17 @@ to plot Bezier curve in 3d. After click a point, hold and drag the mouse around,
 
 
 ### Implementation details
-All methods related to Bezier curves are in module `bezier.py`. 
+All methods related to Bezier curves are in module `bezier.py`.
 
 We implemented 3 different classes for generating Bezier curve.
-They are 
+They are
 * `BezierBernstein`
 * `BezierDeCasteljau`
 * `BezierSubdivision`
-
 
 Methods related to interactive plotting are in module `bezier_builder.py`
 They are
 * `BezierBuilder2D`
 * `BezierBuilder3D`
 
-
-
+All methods related to B-Spline are in module `deboor.py`
