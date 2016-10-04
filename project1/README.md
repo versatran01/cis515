@@ -1,11 +1,19 @@
 # CIS515 Project 1
 
+## Names
+
+* Chao Qu
+* Casey Kent
+* Xilei Kuang
+
 ## Videos
 
 B-spline and Bezier Curve
+
 https://www.youtube.com/watch?v=Lyj-4JJX70Q
 
 Bezier Curve 3D
+
 https://www.youtube.com/watch?v=pIlueSqXc1k
 
 ## Requirements
@@ -53,23 +61,23 @@ After click a point, hold and drag the mouse around, you will see a circle. The 
 ### Implementation Details
 All methods related to Bezier curves are in module `bezier.py`.
 
-We implemented 3 different classes for generating Bezier curve.  
+We implemented 3 different classes for generating Bezier curve.
 They are
 * `BezierBernstein`
 * `BezierDeCasteljau`
 * `BezierSubdivision`
 
-All methods related to B-Spline are in module `deboor.py`  
+All methods related to B-Spline are in module `deboor.py`
 They are
 * `deboor_to_bezier`
 * `deboor_1st`
 * `deboor_2nd`
 * `deboor_ith`
 
-Methods related to interactive plotting are in module `bezier_builder.py` and `deboor_builder.py`.  
+Methods related to interactive plotting are in module `bezier_builder.py` and `deboor_builder.py`.
 They are
 * `BezierBuilder2D`
 * `BezierBuilder3D`
 * `DeboorBuilder2D`
 
-Files in `examples/`, `scripts/`, `test/` are not used.
+Files in `examples/`, `scripts/`, `tests/` are not used.
