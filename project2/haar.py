@@ -1,10 +1,6 @@
 import numpy as np
 
 
-def plf(u):
-    return u
-
-
 def haar(u):
     return u
 
