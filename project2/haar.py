@@ -7,16 +7,39 @@ def haar(u):
     :param u: input vector
     :return: Haar coefficients of the input vector
     """
-    l = len(u)
-    n = int(np.log2(l))
-    # initialize
-    c = u
+    return haar_step(u, -1)
 
-    for j in range(n):
+
+def haar_inv(c):
+    """
+    Reconstruct a vector from its Haar coefficients
+    :param c: Haar coefficients
+    :return: original vector
+    """
+    return haar_inv_step(c, -1)
+
+
+def haar_step(u, k):
+    """
+    Compute the Haar transformation of a vector k steps
+    :param u: input vector
+    :param k: number of steps, -1 means n steps
+    :return: Haar coefficients of the input vector
+    """
+    n = int(np.log2(len(u)))
+
+    assert k <= n
+    if k < 0:
+        k = n
+
+    # initialize
+    c = np.array(u, copy=True)
+
+    for j in range(k):
         # extract part of u to do average and diff
         m = n - j
         iu = 2 ** m
-        v = np.reshape(u[:iu], (-1, 2))
+        v = np.reshape(c[:iu], (-1, 2))
         mean = np.mean(v, axis=-1)
         diff = -np.diff(v) / 2.0
 
@@ -28,22 +51,27 @@ def haar(u):
     return c
 
 
-def haar_inv(c):
+def haar_inv_step(c, k):
     """
     Reconstruct a vector from its Haar coefficients
     :param c: Haar coefficients
+    :param k: number of steps, -1 means n steps
     :return: original vector
     """
-    l = len(c)
-    n = int(np.log2(l))
-    # initialize
-    u = c
+    n = int(np.log2(len(c)))
 
-    for j in range(n):
+    assert k <= n
+    if k < 0:
+        k = n
+
+    # initialize
+    u = np.array(c, copy=True)
+
+    for j in range(k):
         # extract part of c to reverse average and diff
         ic = 2 ** j
-        mean = c[:ic]
-        diff = c[ic:(ic * 2)]
+        mean = u[:ic]
+        diff = u[ic:(ic * 2)]
 
         # restore part of u
         plus = mean + diff
@@ -54,11 +82,3 @@ def haar_inv(c):
         u[1:iu:2] = minus
 
     return u
-
-
-def haar_step(u, k):
-    return u
-
-
-def haar_inv_step(v, k):
-    return v
