@@ -37,6 +37,6 @@ if __name__ == '__main__':
     ax.margins(0.1)
     ax.grid(True)
     ax.set_title(np.array_str(u3) + " * 8")
-    
+
     plt.show()
 
