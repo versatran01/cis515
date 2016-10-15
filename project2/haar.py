@@ -69,7 +69,7 @@ def haar_inv_step(c, k):
 
     for j in range(k):
         # extract part of c to reverse average and diff
-        ic = 2 ** j
+        ic = 2 ** (n - k + j)
         mean = u[:ic]
         diff = u[ic:(ic * 2)]
 
