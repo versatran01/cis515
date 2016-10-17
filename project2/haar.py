@@ -58,6 +58,7 @@ def haar_inv_step(c, k):
     :param k: number of steps, -1 means n steps
     :return: original vector
     """
+
     n = int(np.log2(len(c)))
 
     assert k <= n
