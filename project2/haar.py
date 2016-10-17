@@ -28,6 +28,7 @@ def haar_step(u, k):
     """
     n = int(np.log2(len(u)))
 
+    assert 2 ** n == len(u)
     assert k <= n
     if k < 0:
         k = n
@@ -58,9 +59,9 @@ def haar_inv_step(c, k):
     :param k: number of steps, -1 means n steps
     :return: original vector
     """
-
     n = int(np.log2(len(c)))
 
+    assert 2 ** n == len(c)
     assert k <= n
     if k < 0:
         k = n

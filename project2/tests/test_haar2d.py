@@ -13,7 +13,7 @@ class TestHaar2d(unittest.TestCase):
                            [32, 34, 35, 29, 28, 38, 39, 25],
                            [41, 23, 22, 44, 45, 19, 18, 48],
                            [49, 15, 14, 52, 53, 11, 10, 56],
-                           [8, 58, 59, 5, 4, 62, 63, 1]], float)
+                           [8, 58, 59, 5, 4, 62, 63, 1.0]])
         self.C = np.array([[32.5, 0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0, 0],
                            [0, 0, 0, 0, 4, -4, 4, -4],
@@ -28,4 +28,4 @@ class TestHaar2d(unittest.TestCase):
 
     def test_haar_inv2d(self):
         pass
-        # nt.assert_array_almost_equal(haar_inv2d(self.C), self.A)
+        nt.assert_array_almost_equal(haar_inv2d(self.C), self.A)
