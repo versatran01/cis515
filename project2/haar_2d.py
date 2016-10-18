@@ -2,7 +2,7 @@ import numpy as np
 from project2.haar import haar, haar_inv
 
 
-def haar2d(A):
+def haar2d(A, normalize=False):
     """
 
     :param A:
@@ -12,17 +12,17 @@ def haar2d(A):
 
     B = np.empty_like(A)
     for i in range(r):
-        B[i] = haar(A[i])
+        B[i] = haar(A[i], normalize=normalize)
 
     BT = np.transpose(B)
     CT = np.empty_like(BT)
     for i in range(c):
-        CT[i] = haar(BT[i])
+        CT[i] = haar(BT[i], normalize=normalize)
 
     return np.transpose(CT)
 
 
-def haar_inv2d(C):
+def haar_inv2d(C, normalize=False):
     """
 
     :param C:
@@ -33,19 +33,29 @@ def haar_inv2d(C):
     CT = np.transpose(C)
     BT = np.empty_like(CT)
     for i in range(c):
-        BT[i] = haar_inv(CT[i])
+        BT[i] = haar_inv(CT[i], normalize=normalize)
 
     B = np.transpose(BT)
     A = np.empty_like(B)
     for i in range(r):
-        A[i] = haar_inv(B[i])
+        A[i] = haar_inv(B[i], normalize=normalize)
 
     return A
 
 
-def haar2d_n(M):
-    return M
+def haar2d_n(A):
+    """
+
+    :param A:
+    :return:
+    """
+    return haar2d(A, normalize=True)
 
 
-def haar_inv2d_n(M):
-    return M
+def haar_inv2d_n(C):
+    """
+
+    :param C:
+    :return:
+    """
+    return haar_inv2d(C, normalize=True)
