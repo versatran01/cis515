@@ -2,16 +2,20 @@ import os
 import numpy as np
 import scipy.ndimage as ndi
 import matplotlib.pyplot as plt
+from scipy.misc import imresize
 
 from project2.haar_2d import haar2d, haar_inv2d
 
 data_dir = os.path.abspath('../data')
-durer_file = os.path.join(data_dir, 'durer.png')
+image_file = os.path.join(data_dir, 'durer.png')
 
-image = ndi.imread(durer_file)
-image = image[:512]
-pad = np.ones((512, 3)) * 50
-image = np.concatenate((image, pad), axis=1)
+image = ndi.imread(image_file)
+image = imresize(image, size=(512, 512))
+image = np.array(image, float)
+
+# image = image[:512]
+# pad = np.ones((512, 3)) * 50
+# image = np.concatenate((image, pad), axis=1)
 
 fig, axarr = plt.subplots(2, 2)
 fig.set_facecolor('w')
