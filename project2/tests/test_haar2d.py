@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
+from random import randint
 from project2.haar_2d import haar2d, haar_inv2d
 
 
@@ -23,9 +24,17 @@ class TestHaar2d(unittest.TestCase):
                            [0, 0, 0.5, 0.5, -5, 7, -9, 11],
                            [0, 0, -0.5, -0.5, 21, -23, 25, -27]])
 
+        self.n_times = 50
+        self.n_max = 6
+
     def test_haar2d(self):
         nt.assert_array_almost_equal(haar2d(self.A), self.C)
 
     def test_haar_inv2d(self):
-        pass
         nt.assert_array_almost_equal(haar_inv2d(self.C), self.A)
+
+    def test_haar2d_random(self):
+        for i in range(self.n_times):
+            n = randint(1, self.n_max)
+            A = np.random.random((2 ** n, 2 ** n))
+            nt.assert_array_almost_equal(haar_inv2d(haar2d(A)), A)
