@@ -38,3 +38,10 @@ class TestHaar2d(unittest.TestCase):
             n = randint(1, self.n_max)
             A = np.random.random((2 ** n, 2 ** n))
             nt.assert_array_almost_equal(haar_inv2d(haar2d(A)), A)
+
+    def test_haar2d_step_random(self):
+        for i in range(self.n_times):
+            n = randint(1, self.n_max)
+            k = randint(1, n)
+            A = np.random.random((2 ** n, 2 ** n))
+            nt.assert_array_almost_equal(haar_inv2d(haar2d(A, k=k), k=k), A)

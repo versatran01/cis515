@@ -43,6 +43,6 @@ class TestHaar(unittest.TestCase):
     def test_haar_step_random(self):
         for i in range(self.n_times):
             n = randint(1, self.n_max)
-            s = randint(1, n)
+            k = randint(1, n)
             u = np.random.random(2 ** n)
-            nt.assert_array_almost_equal(haar_inv_step(haar_step(u, s), s), u)
+            nt.assert_array_almost_equal(haar_inv_step(haar_step(u, k), k), u)
