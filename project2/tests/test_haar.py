@@ -40,9 +40,25 @@ class TestHaar(unittest.TestCase):
             u = np.random.random(2 ** n)
             nt.assert_array_almost_equal(haar_inv(haar(u)), u)
 
+    def test_haar_normalize_random(self):
+        for i in range(self.n_times):
+            n = randint(1, self.n_max)
+            u = np.random.random(2 ** n)
+            nt.assert_array_almost_equal(haar_inv(haar(u, normalize=True),
+                                                  normalize=True), u)
+
     def test_haar_step_random(self):
         for i in range(self.n_times):
             n = randint(1, self.n_max)
             k = randint(1, n)
             u = np.random.random(2 ** n)
             nt.assert_array_almost_equal(haar_inv_step(haar_step(u, k), k), u)
+
+    def test_haar_step_normalize_random(self):
+        for i in range(self.n_times):
+            n = randint(1, self.n_max)
+            k = randint(1, n)
+            u = np.random.random(2 ** n)
+            nt.assert_array_almost_equal(
+                haar_inv_step(haar_step(u, k=k, normalize=True),
+                              k=k, normalize=True), u)
