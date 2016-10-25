@@ -18,7 +18,7 @@
 
 `scripts` folder contains all scripts that generates answers or plots for each of the problems.
 
-`test` folder contains unittests for all the functions implemented for this project.
+`tests` folder contains unittests for all the functions implemented for this project. Test coverage is 100%.
 
 `haar.py` contains all functions related to Haar transformation and reconstruction of 1-d vector. Both steps and normalize are implemented in the `haar_step` and `haar_inv_step` functions. The rest functions are calling those internally.
 
