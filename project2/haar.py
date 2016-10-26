@@ -53,7 +53,7 @@ def haar_step(u, k, normalize=False):
         # update part of c with average and diff
         ic = int(iu / 2)
         c[:ic] = mean
-        c[ic:(ic * 2)] = np.ravel(diff)
+        c[ic:iu] = np.ravel(diff)
 
     return c
 
@@ -82,8 +82,9 @@ def haar_inv_step(c, k, normalize=False):
     for j in range(k):
         # extract part of c to reverse average and diff
         ic = 2 ** (n - k + j)
+        iu = ic * 2
         mean = u[:ic]
-        diff = u[ic:(ic * 2)]
+        diff = u[ic:iu]
 
         # restore part of u
         plus = (mean + diff) / d
