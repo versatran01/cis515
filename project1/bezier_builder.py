@@ -129,7 +129,7 @@ class BezierBuilder3D(BezierBuilder2D):
         self.patch_circle.radius = r
 
         # Speed update drawing (only draw the circle)
-        self.canvas.restore_region(self.background_2d)
+        self.canvas.restore_region(self.background_2d,blit=False)
         self.ax_2d.draw_artist(self.patch_circle)
         self.canvas.blit(self.ax_2d.bbox)
 

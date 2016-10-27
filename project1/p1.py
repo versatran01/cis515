@@ -202,6 +202,8 @@ class DeboorBuilder:
         :param event:
         :return:
         """
+        if self.last_point:
+            return
         if event.key == ' ':
             self.last_point = True
             bezier_points, self.segments = deboor_to_bezier(
