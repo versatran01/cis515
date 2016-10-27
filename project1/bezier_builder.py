@@ -1,9 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.lines import Line2D
 from mpl_toolkits.mplot3d.art3d import Line3D
-from project1.bezier import (BezierBernstein, BezierDeCasteljau,
-                             BezierSubdivision)
+
+from project1.bezier import (BezierSubdivision)
 
 
 class BezierBuilder2D(object):
@@ -24,7 +24,7 @@ class BezierBuilder2D(object):
         # Bezier curve in 2D
         self.bezier_curve_style = {'color': 'b'}
         bezier_curve_2d = Line2D([], [], **self.bezier_curve_style)
-        self.line_bezier_2d = self.ax_2d.add_line(bezier_curve_2d)
+        self.line_bezier_points_2d = self.ax_2d.add_line(bezier_curve_2d)
 
         # Bezier curve method
         self.bezier = BezierSubdivision()
@@ -48,12 +48,12 @@ class BezierBuilder2D(object):
     def reset(self):
         self.points_x = []
         self.points_y = []
-        self.line_bezier_2d.set_data([], [])
+        self.line_bezier_points_2d.set_data([], [])
         self.line_points_2d.set_data([], [])
 
     def update_points_and_curve_2d(self):
         self.line_points_2d.set_data(self.points_x, self.points_y)
-        self.line_bezier_2d.set_data(
+        self.line_bezier_points_2d.set_data(
             *self.create_curve(self.points_x, self.points_y))
 
     def on_button_press(self, event):
@@ -85,7 +85,7 @@ class BezierBuilder2D(object):
         self.canvas.draw()
 
     def set_curve_marker(self, marker):
-        self.line_bezier_2d.set_marker(marker)
+        self.line_bezier_points_2d.set_marker(marker)
 
 
 class BezierBuilder3D(BezierBuilder2D):
@@ -191,3 +191,5 @@ class BezierBuilder3D(BezierBuilder2D):
         x, y, z = args
         line_3d.set_data(np.array(x), np.array(y))
         line_3d.set_3d_properties(np.array(z))
+
+
