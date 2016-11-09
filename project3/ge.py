@@ -88,6 +88,7 @@ def back_sub(A, B, fast=False):
     Back substitution of a triangular system AX = B
     :param A: MxM matrix
     :param B: MxP matrix
+    :param fast: if True use scipy.linalg.solve_triangular
     :return: MxP matrix X such that AX=B
     """
     if fast:
