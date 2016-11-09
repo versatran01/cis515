@@ -3,7 +3,7 @@ import numpy as np
 import scipy.linalg as la
 from random import randint
 import numpy.testing as nt
-from project3.ge import gaussian_elimination
+from project3.ge import gauss_elim
 
 
 class TestHaar(unittest.TestCase):

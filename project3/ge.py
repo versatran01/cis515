@@ -1,22 +1,46 @@
 import numpy as np
+import scipy.linalg as la
 
 
-def ge_solve(A, B):
+def ge_solve(A, B, fast=False):
+    """
+    Solve AX=B using gaussian elimination with partial pivoting
+    :param A: MxM matrix
+    :param B: MxP matrix
+    :return: MxP matrix X such that AX=B
+    """
+    A = np.asarray(A, float)
+    B = np.asarray(B, float)
+
+    if np.ndim(B) == 1:
+        B = np.atleast_2d(B).T
+
+    mA, nA = np.shape(A)
+    mB, nB = np.shape(B)
+
+    if mA != mB:
+        raise ValueError("incompatible dimension, number of equations do not "
+                         "match: {} != {}.".format(mA, mB))
+
+    if mA != nA:
+        raise ValueError("incompatible dimension, A is not square matrix")
+
     AB = np.hstack((A, B))
-    ABr = gaussian_elimination(AB)
+    ABr, pivlist = gauss_elim(AB)
+    Ar, Br = np.split(ABr, [nA], axis=1)
+    X = back_sub(Ar, Br, fast=fast)
+    return X
 
 
-def gaussian_elimination(A, partial_pivot=True):
+def gauss_elim(A, partial_pivot=True):
     """
     Gaussian elimination
-    :param A:
-    :param b:
-    :param partial_pivot:
+    :param A: MxN matrix
+    :param partial_pivot: True to use partial pivot
     :return:
     """
     assert np.ndim(A) == 2
     r, c = np.shape(A)
-    assert r == c
 
     pivlist = np.arange(r)
 
@@ -38,6 +62,8 @@ def gaussian_elimination(A, partial_pivot=True):
         # Swap row 1 with row i of A_k
         if i != 0:
             A_k[[0, i]] = A_k[[i, 0]]
+            pivlist[k] = k + i
+            pivlist[k + i] = k
 
         # Make pivot element 1
         pivot = A_k[0, 0]
@@ -50,20 +76,48 @@ def gaussian_elimination(A, partial_pivot=True):
     return A, pivlist
 
 
-def back_substitution(A, B, pivlist):
+def is_triu(M):
     """
+    Check if matrix is upper triangular
+    """
+    return np.array_equal(M, np.triu(M))
 
-    :param A:
-    :param b:
-    :return:
+
+def back_sub(A, B, fast=False):
     """
-    pass
+    Back substitution of a triangular system AX = B
+    :param A: MxM matrix
+    :param B: MxP matrix
+    :return: MxP matrix X such that AX=B
+    """
+    if fast:
+        return la.solve_triangular(A, B)
+
+    A = np.asarray(A, float)
+    B = np.asarray(B, float)
+    X = np.empty_like(B)
+
+    mA, nA = np.shape(A)
+
+    if not is_triu(A):
+        raise ValueError("A is not upper triangular")
+
+    X[-1] = B[-1] / A[-1, -1]
+    for i in reversed(range(mA - 1)):
+        ax = np.dot(A[i, i + 1:], X[i + 1:])
+        X[i] = (B[i] - np.sum(ax)) / A[i, i]
+
+    return X
 
 
 if __name__ == "__main__":
-    A = np.array([[2, 1, 1], [4, -6, 0], [-2, 7, 2]], float)
+    # A = np.array([[2, 1, 1], [4, -6, 0], [-2, 7, 2]], float)
     # A = np.array([[1, 1, 1], [1, 1, 3], [2, 5, 8]], float)
-    b = np.array([5, -2, 9], float)
-    # b = np.array([1, 1, 1], float)
-    Ae, be = gaussian_elimination(A)
-    print(Ae)
+    A = np.array([[0, 0, 1], [-2, 7, 2], [4, -6, 0]], float)
+    # B = np.array([5, -2, 9], float)
+    # B = np.array([1, 1, 1], float)
+    B = np.array([1, 1, -1], float)
+    X = ge_solve(A, B, fast=False)
+    Xf = ge_solve(A, B, fast=True)
+    print(Xf)
+    print(X)
