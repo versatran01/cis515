@@ -91,6 +91,9 @@ def back_sub(A, B, fast=False):
     :param fast: if True use scipy.linalg.solve_triangular
     :return: MxP matrix X such that AX=B
     """
+    if not is_triu(A):
+        raise ValueError("A is not upper triangular")
+
     if fast:
         return la.solve_triangular(A, B)
 
@@ -100,13 +103,10 @@ def back_sub(A, B, fast=False):
 
     mA, nA = np.shape(A)
 
-    if not is_triu(A):
-        raise ValueError("A is not upper triangular")
-
     X[-1] = B[-1] / A[-1, -1]
     for i in reversed(range(mA - 1)):
         ax = np.dot(A[i, i + 1:], X[i + 1:])
-        X[i] = (B[i] - np.sum(ax)) / A[i, i]
+        X[i] = (B[i] - np.sum(ax, axis=0)) / A[i, i]
 
     return X
 
