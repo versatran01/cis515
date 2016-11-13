@@ -2,11 +2,12 @@ import numpy as np
 import scipy.linalg as la
 
 
-def ge_solve(A, B, fast=False):
+def ge_solve(A, B, use_scipy=False):
     """
     Solve AX=B using gaussian elimination with partial pivoting
     :param A: MxM matrix
     :param B: MxP matrix
+    :param use_scipy:
     :return: MxP matrix X such that AX=B
     """
     A = np.asarray(A, float)
@@ -28,7 +29,7 @@ def ge_solve(A, B, fast=False):
     AB = np.hstack((A, B))
     ABr = gauss_elim(AB)
     Ar, Br = np.split(ABr, [nA], axis=1)
-    X = back_sub(Ar, Br, fast=fast)
+    X = back_sub(Ar, Br, use_scipy=use_scipy)
     return X
 
 
@@ -67,7 +68,8 @@ def gauss_elim(A, partial_pivot=True):
 
         # Eliminate all variables below
         for j in range(1, r - k):
-            A_k[j] -= pivot_row * A_k[j, 0]
+            if A_k[j, 0] != 0:
+                A_k[j] -= pivot_row * A_k[j, 0]
 
     return A
 
@@ -79,18 +81,18 @@ def is_triu(M):
     return np.array_equal(M, np.triu(M))
 
 
-def back_sub(A, B, fast=False):
+def back_sub(A, B, use_scipy=False):
     """
     Back substitution of a triangular system AX = B
     :param A: MxM matrix
     :param B: MxP matrix
-    :param fast: if True use scipy.linalg.solve_triangular
+    :param use_scipy: if True use scipy.linalg.solve_triangular
     :return: MxP matrix X such that AX=B
     """
     if not is_triu(A):
         raise ValueError("A is not upper triangular")
 
-    if fast:
+    if use_scipy:
         return la.solve_triangular(A, B)
 
     A = np.asarray(A, float)
