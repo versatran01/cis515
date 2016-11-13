@@ -81,6 +81,13 @@ def is_triu(M):
     return np.array_equal(M, np.triu(M))
 
 
+def is_tril(M):
+    """
+    Check if matrix is lower triangular
+    """
+    return np.array_equal(M, np.tril(M))
+
+
 def back_sub(A, B, use_scipy=False):
     """
     Back substitution of a triangular system AX = B
@@ -107,3 +114,20 @@ def back_sub(A, B, use_scipy=False):
         X[i] = (B[i] - np.sum(ax, axis=0)) / A[i, i]
 
     return X
+
+
+def forward_sub(A, B, use_scipy=False):
+    """
+    Forward substitution of a triangular system AX = B
+    :param A: MxM lower triangular matrix
+    :param B: MxP matrix
+    :param use_scipy: if True use scipy.linalg.solve_triangular
+    :return: MxP matrix X such that AX=B
+    """
+    if not is_tril(A):
+        raise ValueError("A is not lower triangular")
+
+    if use_scipy:
+        return la.solve_triangular(A, B, lower=True)
+
+        # TODO: add our own forward-substitution code

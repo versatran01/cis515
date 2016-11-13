@@ -1,8 +1,11 @@
 import numpy as np
 import scipy.linalg as la
+from project3.ge import back_sub, forward_sub
 
 
 def lu_solve(A, B, tridiag=False):
+    # To do this, first implement lu_factor and then use back_sub and
+    # forward_sub to solve for X
     pass
 
 
