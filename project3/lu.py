@@ -2,16 +2,11 @@ import numpy as np
 import scipy.linalg as la
 
 
-def lu_solve(A, B, tridiag=True, use_scipy=False):
-    if use_scipy:
-        return lu_solve_scipy(A, B, tridiag=tridiag)
-
-    # Our implementation here
-
-    return None
+def lu_solve(A, B, tridiag=False):
+    pass
 
 
-def lu_solve_scipy(A, B, tridiag=True):
+def lu_solve_scipy(A, B, tridiag=False):
     """
     Scipy version of lu_solve
     :param A:
@@ -37,16 +32,13 @@ def banded_from_tridiag(A):
     if m != n:
         raise ValueError('A is not square matrix')
 
-    ab = np.zeros((3, m))
+    ab = np.empty((3, m))
     ab[0, 1:] = np.diag(A, 1)
     ab[1] = np.diag(A)
     ab[-1, :-1] = np.diag(A, -1)
 
+    # Pad 0s
+    ab[0, 0] = 0
+    ab[-1, -1] = 0
+
     return ab
-
-
-if __name__ == '__main__':
-    A = np.reshape(np.arange(16), (4, 4))
-    print(A)
-    ab = banded_from_tridiag(A)
-    print(ab)

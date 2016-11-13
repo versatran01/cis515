@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
-from project3.ge import ge_solve
+from project3.lu import lu_solve_scipy
 
 
 class TestGe(unittest.TestCase):
@@ -19,30 +19,23 @@ class TestGe(unittest.TestCase):
         self.n_times = 50
         self.n_max = 8
 
-    def test_ge_solve(self):
-        X0 = ge_solve(self.A0, self.B0)
+    def test_lu_solve_scipy(self):
+        X0 = lu_solve_scipy(self.A0, self.B0)
         nt.assert_array_equal(self.X0, X0.ravel())
-        X1 = ge_solve(self.A1, self.B1)
+        X1 = lu_solve_scipy(self.A1, self.B1)
         nt.assert_array_equal(self.X1, X1.ravel())
-        X2 = ge_solve(self.A2, self.B2)
+        X2 = lu_solve_scipy(self.A2, self.B2)
         nt.assert_array_equal(self.X2, X2.ravel())
 
-    def test_ge_solve_random(self):
+    def test_lu_solve_scipy_random(self):
         for n in range(self.n_max):
             nX = 2 ** n
             A = np.random.random((nX, nX))
             X = np.random.random(nX)
             B = np.dot(A, X)
 
-            Xge = ge_solve(A, B, use_scipy=False)
-            nt.assert_array_almost_equal(X, Xge.ravel())
+            Xlu = lu_solve_scipy(A, B, tridiag=False)
+            nt.assert_array_almost_equal(X, Xlu.ravel())
 
-    def test_ge_solve_random_scipy(self):
-        for n in range(self.n_max):
-            nX = 2 ** n
-            A = np.random.random((nX, nX))
-            X = np.random.random(nX)
-            B = np.dot(A, X)
-
-            Xge = ge_solve(A, B, use_scipy=True)
-            nt.assert_array_almost_equal(X, Xge.ravel())
+    def test_lu_solve_scipy_tridiag_random(self):
+        pass
