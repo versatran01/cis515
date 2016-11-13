@@ -18,6 +18,9 @@ class TestGe(unittest.TestCase):
         self.X1 = np.array([4, -1, 0], float) / 3.0
         self.X2 = np.array([-0.8125, -0.375, 1])
 
+        self.n_times = 50
+        self.n_max = 8
+
     def test_ge_solve(self):
         X0 = ge_solve(self.A0, self.B0)
         nt.assert_array_equal(self.X0, X0.ravel())
@@ -27,4 +30,11 @@ class TestGe(unittest.TestCase):
         nt.assert_array_equal(self.X2, X2.ravel())
 
     def test_ge_solve_random(self):
-        pass
+        for n in range(self.n_max):
+            nX = 2 ** n
+            A = np.random.random((nX, nX))
+            X = np.random.random(nX)
+            B = np.dot(A, X)
+
+            Xge = ge_solve(A, B)
+            nt.assert_array_almost_equal(X, Xge.ravel())

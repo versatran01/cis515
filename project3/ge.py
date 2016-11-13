@@ -26,7 +26,7 @@ def ge_solve(A, B, fast=False):
         raise ValueError("incompatible dimension, A is not square matrix")
 
     AB = np.hstack((A, B))
-    ABr, pivlist = gauss_elim(AB)
+    ABr = gauss_elim(AB)
     Ar, Br = np.split(ABr, [nA], axis=1)
     X = back_sub(Ar, Br, fast=fast)
     return X
@@ -41,8 +41,6 @@ def gauss_elim(A, partial_pivot=True):
     """
     assert np.ndim(A) == 2
     r, c = np.shape(A)
-
-    pivlist = np.arange(r)
 
     for k in range(r - 1):
         # Working on the kth subsystem
@@ -62,8 +60,6 @@ def gauss_elim(A, partial_pivot=True):
         # Swap row 1 with row i of A_k
         if i != 0:
             A_k[[0, i]] = A_k[[i, 0]]
-            pivlist[k] = k + i
-            pivlist[k + i] = k
 
         # Make pivot element 1
         pivot = A_k[0, 0]
@@ -73,7 +69,7 @@ def gauss_elim(A, partial_pivot=True):
         for j in range(1, r - k):
             A_k[j] -= pivot_row * A_k[j, 0]
 
-    return A, pivlist
+    return A
 
 
 def is_triu(M):
@@ -109,16 +105,3 @@ def back_sub(A, B, fast=False):
         X[i] = (B[i] - np.sum(ax, axis=0)) / A[i, i]
 
     return X
-
-
-if __name__ == "__main__":
-    # A = np.array([[2, 1, 1], [4, -6, 0], [-2, 7, 2]], float)
-    # A = np.array([[1, 1, 1], [1, 1, 3], [2, 5, 8]], float)
-    A = np.array([[0, 0, 1], [-2, 7, 2], [4, -6, 0]], float)
-    # B = np.array([5, -2, 9], float)
-    # B = np.array([1, 1, 1], float)
-    B = np.array([1, 1, -1], float)
-    X = ge_solve(A, B, fast=False)
-    Xf = ge_solve(A, B, fast=True)
-    print(Xf)
-    print(X)
