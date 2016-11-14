@@ -4,6 +4,11 @@ import numpy.testing as nt
 from project3.ge import ge_solve
 
 
+class TestSolve(unittest.TestCase):
+    def random_solve(self, solve_fun, gen_matrix):
+        pass
+
+
 class TestGe(unittest.TestCase):
     def setUp(self):
         self.A0 = np.array([[2, 1, 1], [4, -6, 0], [-2, 7, 2]], float)

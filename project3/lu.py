@@ -3,7 +3,7 @@ import scipy.linalg as la
 from project3.ge import back_sub, forward_sub
 
 
-def lu_solve(A, B, tridiag=False):
+def lu_solve(A, B, tridiag=True):
     """
 
     :param A:
@@ -35,15 +35,15 @@ def lu_solve(A, B, tridiag=False):
         L = np.eye(n) + np.diag(ddl[1:], k=-1)
         U = np.diag(dd) + np.diag(du[1:], k=1)
 
-        y = forward_sub(L, B, use_scipy=True)
-        x = back_sub(U, y, use_scipy=False)
+        W = forward_sub(L, B, use_scipy=True)
+        X = back_sub(U, W, use_scipy=True)
 
-        return x
+        return X
 
     return None
 
 
-def lu_solve_scipy(A, B, tridiag=False):
+def lu_solve_scipy(A, B, tridiag=True):
     """
     Scipy version of lu_solve
     :param A:
@@ -70,8 +70,11 @@ def banded_from_tridiag(A):
         raise ValueError('A is not square matrix')
 
     ab = np.empty((3, m))
+    # First row of ab is A off-diagonal by 1
     ab[0, 1:] = np.diag(A, 1)
+    # Second row of ab is A diagonal
     ab[1] = np.diag(A)
+    # Last row of ab is A off-diagonal by -1
     ab[-1, :-1] = np.diag(A, -1)
 
     # Pad 0s
@@ -81,8 +84,13 @@ def banded_from_tridiag(A):
     return ab
 
 
-A = np.diag([-20, 5, 7], k=-1) + np.diag([5, 8, 2, 9]) + np.diag([-6, -5, -7],
-                                                                 k=1)
-ab = banded_from_tridiag(A)
-x = lu_solve(A, [1, 1, 1, 1, ], tridiag=True)
-print(x)
+def rand_tridiag(n):
+    """
+    Random tridiagonal matrix
+    :param n: dimension
+    :return:
+    """
+    A = np.diag(np.random.random(n - 1), 1) + \
+        np.diag(np.random.random(n)) + \
+        np.diag(np.random.random(n - 1), -1)
+    return A

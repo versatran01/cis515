@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
-from project3.lu import lu_solve_scipy, lu_solve
+from project3.lu import lu_solve_scipy, lu_solve, rand_tridiag
+from functools import partial
 
 
 class TestGe(unittest.TestCase):
@@ -19,20 +20,19 @@ class TestGe(unittest.TestCase):
         self.n_times = 50
         self.n_max = 8
 
-    def test_lu_solve_tridiag(self):
-        X0 = lu_solve(self.A0, self.B0, tridiag=True)
-        nt.assert_array_equal(self.X0, X0.ravel())
-        X1 = lu_solve(self.A1, self.B1, tirdiag=True)
-        nt.assert_array_equal(self.X1, X1.ravel())
-        X2 = lu_solve(self.A2, self.B2, tridiag=True)
-        nt.assert_array_equal(self.X2, X2.ravel())
+    def test_lu_solve_tridiag_random(self):
+        pass
+
+    def random_lu_solve(self, solve_fun):
+        pass
 
     def test_lu_solve_scipy(self):
-        X0 = lu_solve_scipy(self.A0, self.B0)
+        f = partial(lu_solve_scipy, tridiag=False)
+        X0 = f(self.A0, self.B0)
         nt.assert_array_equal(self.X0, X0.ravel())
-        X1 = lu_solve_scipy(self.A1, self.B1)
+        X1 = f(self.A1, self.B1)
         nt.assert_array_equal(self.X1, X1.ravel())
-        X2 = lu_solve_scipy(self.A2, self.B2)
+        X2 = f(self.A2, self.B2)
         nt.assert_array_equal(self.X2, X2.ravel())
 
     def test_lu_solve_scipy_random(self):
@@ -46,4 +46,10 @@ class TestGe(unittest.TestCase):
             nt.assert_array_almost_equal(X, Xlu.ravel())
 
     def test_lu_solve_scipy_tridiag_random(self):
-        pass
+        for n in range(self.n_max):
+            nX = 2 ** n
+            A = rand_tridiag(nX)
+            X = np.random.random(nX)
+            B = np.dot(A, X)
+            Xlu = lu_solve_scipy(A, B, tridiag=True)
+            nt.assert_array_almost_equal(X, Xlu.ravel())
