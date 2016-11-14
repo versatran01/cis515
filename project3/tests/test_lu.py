@@ -15,4 +15,4 @@ class TestLu(TestSolve):
 
     def test_lu_solve_scipy_tridiag_random(self):
         f = partial(lu_solve_scipy, tridiag=True)
-        self.random_solve(f, rand_tridiag)
+        self.random_solve(f, rand_tridiag, n_min=3)

@@ -7,8 +7,8 @@ from functools import partial
 
 class TestSolve(unittest.TestCase):
     def setUp(self):
-        self.n_max = 8
-        self.n_times = 10
+        self.n_max = 5
+        self.n_times = 5
         self.n_X = 5
 
     def random_solve(self, solve_fun, gen_matrix):

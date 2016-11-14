@@ -59,7 +59,8 @@ def gauss_elim(A, partial_pivot=True):
             i = np.argmax(np.where(A_k[:, 0] != 0))[0]
 
         # and it cannot be zero, otherwise matrix is singular
-        assert A_k[i, 0] != 0
+        if A_k[i, 0] == 0:
+            raise ValueError('pivot is zero.')
 
         # Swap row 1 with row i of A_k
         if i != 0:
@@ -115,7 +116,7 @@ def back_sub(A, B, use_scipy=False):
     X[-1] = B[-1] / A[-1, -1]
     for i in reversed(range(mA - 1)):
         ax = np.dot(A[i, i + 1:], X[i + 1:])
-        X[i] = (B[i] - np.sum(ax, axis=0)) / A[i, i]
+        X[i] = (B[i] - ax) / A[i, i]
 
     return X
 
@@ -144,3 +145,12 @@ def rand_square(n):
     :return:
     """
     return np.random.random((n, n))
+
+
+if __name__ == '__main__':
+    A = np.array([[1, 1, 1], [1, 1, 3], [2, 5, 8]])
+    X = np.ones((3, 2))
+    B = np.dot(A, X)
+    X0 = ge_solve(A, B, use_scipy=False)
+    print(X)
+    print(X0)

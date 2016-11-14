@@ -53,6 +53,9 @@ def lu_solve_scipy(A, B, tridiag=True):
     """
     n, _ = np.shape(A)
     if tridiag:
+        if np.size(A) == 1:
+            return B / np.ravel(A)[0]
+
         ab = banded_from_tridiag(A)
         return la.solve_banded((1, 1), ab, B)
 
@@ -97,7 +100,9 @@ def rand_tridiag(n):
 
 
 if __name__ == '__main__':
-    A = np.eye(2)
-    X = np.ones((2, 2))
+    A = rand_tridiag(5)
+    print(A)
+    X = np.ones((5, 3))
     B = np.dot(A, X)
-    lu_solve_scipy(A, B, tridiag=True)
+    Xs = lu_solve_scipy(A, B, tridiag=True)
+    print(Xs)
