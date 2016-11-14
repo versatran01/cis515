@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
-from project3.lu import lu_solve_scipy
+from project3.lu import lu_solve_scipy, lu_solve
 
 
 class TestGe(unittest.TestCase):
@@ -18,6 +18,14 @@ class TestGe(unittest.TestCase):
 
         self.n_times = 50
         self.n_max = 8
+
+    def test_lu_solve_tridiag(self):
+        X0 = lu_solve(self.A0, self.B0, tridiag=True)
+        nt.assert_array_equal(self.X0, X0.ravel())
+        X1 = lu_solve(self.A1, self.B1, tirdiag=True)
+        nt.assert_array_equal(self.X1, X1.ravel())
+        X2 = lu_solve(self.A2, self.B2, tridiag=True)
+        nt.assert_array_equal(self.X2, X2.ravel())
 
     def test_lu_solve_scipy(self):
         X0 = lu_solve_scipy(self.A0, self.B0)

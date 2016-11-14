@@ -4,7 +4,13 @@ from project3.ge import back_sub, forward_sub
 
 
 def lu_solve(A, B, tridiag=False):
-    # type: (object, object, object) -> object
+    """
+
+    :param A:
+    :param B:
+    :param tridiag:
+    :return:
+    """
     # To do this, first implement lu_factor and then use back_sub and
     # forward_sub to solve for X
     if tridiag:
@@ -34,7 +40,7 @@ def lu_solve(A, B, tridiag=False):
 
         return x
 
-    pass
+    return None
 
 
 def lu_solve_scipy(A, B, tridiag=False):
