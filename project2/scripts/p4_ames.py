@@ -1,5 +1,5 @@
 import numpy as np
-from haar_2d import haar_inv2d
+from project2.haar_2d import haar_inv2d
 
 C = np.array([[1212, -306, -146, -54, -24, -68, -40, 4],
               [30, 36, -90, -2, 8, -20, 8, -4],
