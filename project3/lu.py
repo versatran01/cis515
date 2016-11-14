@@ -61,8 +61,8 @@ def lu_solve_scipy(A, B, tridiag=True):
 def banded_from_tridiag(A):
     """
     Convert tridiagonal matrix to banded matrix
-    :param A: Tridiagonal matrix
-    :return: Banded matrix
+    :param A: MxM Tridiagonal matrix
+    :return: Banded matrix of size 3xM
     """
     m, n = np.shape(A)
     if m != n:
@@ -86,8 +86,8 @@ def banded_from_tridiag(A):
 def rand_tridiag(n):
     """
     Random tridiagonal matrix
-    :param n: dimension
-    :return:
+    :param n: dimension of the matrix
+    :return: A random tridiagonal matrix of size nxn
     """
     A = np.diag(np.random.random(n - 1), 1) + \
         np.diag(np.random.random(n)) + \
