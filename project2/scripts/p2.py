@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from project2.scripts.plot_plf import plot_plf
-from project2.haar import haar
+from scripts.plot_plf import plot_plf
+from haar import haar
 
 u0 = np.array([31, 29, 23, 17, -6, -8, -2, -4])
 u1 = np.array([0, 2, 4, 6, 6, 4, 2, 1, -1, -2, -4, -6, -6, -4, -2, 0])

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from project2.haar import haar_step
-from project2.scripts.plot_plf import plot_plf
+from haar import haar_step
+from scripts.plot_plf import plot_plf
 
 u = np.array([0, 2, 4, 6, 6, 4, 2, 1, -1, -2, -4, -6, -6, -4, -2, 0])
 w = np.tile(u, 8)

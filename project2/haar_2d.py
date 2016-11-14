@@ -1,5 +1,5 @@
 import numpy as np
-from project2.haar import haar_step, haar, haar_inv, haar_inv_step
+from haar import haar_step, haar, haar_inv, haar_inv_step
 
 
 def haar2d(A, k=-1, normalize=False):
