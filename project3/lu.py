@@ -14,13 +14,14 @@ def lu_solve(A, B, tridiag=True):
     # To do this, first implement lu_factor and then use back_sub and
     # forward_sub to solve for X
     if tridiag:
-        ab = banded_from_tridiag(A)
-        m, n = np.shape(ab)
+        m, n = np.shape(A)
+        # Extract diagonals
+        du, d, dl = banded_from_tridiag(A)
 
         # extract diagonals from the banded matrix
-        du = ab[0, :]  # upper diagonal of A padded with zero at end
-        d = ab[1, :]  # diagonal of A
-        dl = ab[2, :]  # lower diagonal of A padded with zero at front
+        # du = ab[0, :]  # upper diagonal of A padded with zero at end
+        # d = ab[1, :]  # diagonal of A
+        # dl = ab[2, :]  # lower diagonal of A padded with zero at front
         # allocate
         ddl = np.empty(n)
         ddl[0] = 0
@@ -53,9 +54,6 @@ def lu_solve_scipy(A, B, tridiag=True):
     """
     n, _ = np.shape(A)
     if tridiag:
-        if np.size(A) == 1:
-            return B / np.ravel(A)[0]
-
         ab = banded_from_tridiag(A)
         return la.solve_banded((1, 1), ab, B)
 
@@ -97,12 +95,3 @@ def rand_tridiag(n):
         np.diag(np.random.random(n)) + \
         np.diag(np.random.random(n - 1), -1)
     return A
-
-
-if __name__ == '__main__':
-    A = rand_tridiag(5)
-    print(A)
-    X = np.ones((5, 3))
-    B = np.dot(A, X)
-    Xs = lu_solve_scipy(A, B, tridiag=True)
-    print(Xs)

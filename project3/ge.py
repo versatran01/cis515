@@ -112,7 +112,6 @@ def back_sub(A, B, use_scipy=False):
 
     mA, nA = np.shape(A)
 
-    # TODO: Fix this, failed when B has more than 1 column
     X[-1] = B[-1] / A[-1, -1]
     for i in reversed(range(mA - 1)):
         ax = np.dot(A[i, i + 1:], X[i + 1:])
@@ -135,7 +134,18 @@ def forward_sub(A, B, use_scipy=False):
     if use_scipy:
         return la.solve_triangular(A, B, lower=True)
 
-        # TODO: add our own forward-substitution code
+    A = np.asarray(A, float)
+    B = np.asarray(B, float)
+    X = np.empty_like(B)
+
+    mA, nA = np.shape(A)
+
+    X[0] = B[0] / A[0, 0]
+    for i in range(1, mA):
+        ax = np.dot(A[i, :i], X[:i])
+        X[i] = (B[i] - ax) / A[i, i]
+
+    return X
 
 
 def rand_square(n):
@@ -145,12 +155,3 @@ def rand_square(n):
     :return:
     """
     return np.random.random((n, n))
-
-
-if __name__ == '__main__':
-    A = np.array([[1, 1, 1], [1, 1, 3], [2, 5, 8]])
-    X = np.ones((3, 2))
-    B = np.dot(A, X)
-    X0 = ge_solve(A, B, use_scipy=False)
-    print(X)
-    print(X0)
