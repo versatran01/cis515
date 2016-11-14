@@ -131,3 +131,4 @@ def forward_sub(A, B, use_scipy=False):
         return la.solve_triangular(A, B, lower=True)
 
         # TODO: add our own forward-substitution code
+    
