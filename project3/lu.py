@@ -16,25 +16,23 @@ def lu_solve(A, B, tridiag=True):
     if tridiag:
         m, n = np.shape(A)
         # Extract diagonals
-        du, d, dl = banded_from_tridiag(A)
+        c, b, a = banded_from_tridiag(A)
 
-        # extract diagonals from the banded matrix
-        # du = ab[0, :]  # upper diagonal of A padded with zero at end
-        # d = ab[1, :]  # diagonal of A
-        # dl = ab[2, :]  # lower diagonal of A padded with zero at front
         # allocate
-        ddl = np.empty(n)
-        ddl[0] = 0
+        # off diagonal of L
+        ddL = np.empty(n)
+        ddL[0] = 0
 
-        dd = np.empty(n)
-        dd[0] = d[0]
+        # diagonal of U
+        dU = np.empty(n)
+        dU[0] = b[0]
 
         for i in range(1, n):
-            ddl[i] = dl[i - 1] / dd[i - 1]
-            dd[i] = d[i] - ddl[i] * du[i]
+            ddL[i] = a[i - 1] / dU[i - 1]
+            dU[i] = b[i] - ddL[i] * c[i]
 
-        L = np.eye(n) + np.diag(ddl[1:], k=-1)
-        U = np.diag(dd) + np.diag(du[1:], k=1)
+        L = np.eye(n) + np.diag(ddL[1:], k=-1)
+        U = np.diag(dU) + np.diag(c[1:], k=1)
 
         W = forward_sub(L, B, use_scipy=True)
         X = back_sub(U, W, use_scipy=True)
