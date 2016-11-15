@@ -3,7 +3,7 @@ import scipy.linalg as la
 from project3.ge import back_sub, forward_sub
 
 
-def lu_solve(A, B, tridiag=True):
+def lu_solve(A, B, tridiag=True, use_scipy=True):
     """
 
     :param A:
@@ -34,8 +34,8 @@ def lu_solve(A, B, tridiag=True):
         L = np.eye(n) + np.diag(ddL[1:], k=-1)
         U = np.diag(dU) + np.diag(c[1:], k=1)
 
-        W = forward_sub(L, B, use_scipy=True)
-        X = back_sub(U, W, use_scipy=True)
+        W = forward_sub(L, B, use_scipy=use_scipy)
+        X = back_sub(U, W, use_scipy=use_scipy)
 
         return X
 
