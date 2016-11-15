@@ -36,8 +36,10 @@ def create_plots():
     ax.set_xlabel('Matrix Size')
     ax.set_ylabel('Time [ms]')
 
-    ax.plot(sizes, times[0], color="blue", linewidth=2.5, linestyle="-", label="gaussian elimination")
-    ax.plot(sizes, times[1], color="red", linewidth=2.5, linestyle="-", label="lu factorization")
+    ax.plot(sizes, times[0], color="blue", linewidth=2.5, linestyle="-",
+            label="gaussian elimination")
+    ax.plot(sizes, times[1], color="red", linewidth=2.5, linestyle="-",
+            label="lu factorization")
     plt.legend(loc='upper left')
     plt.grid()
     plt.show()
