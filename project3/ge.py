@@ -111,6 +111,7 @@ def back_sub(A, B, use_scipy=False):
 
     mA, nA = np.shape(A)
 
+    # TODO: Fix this, failed when B has more than 1 column
     X[-1] = B[-1] / A[-1, -1]
     for i in reversed(range(mA - 1)):
         ax = np.dot(A[i, i + 1:], X[i + 1:])

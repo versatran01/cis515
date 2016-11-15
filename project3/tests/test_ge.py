@@ -8,7 +8,8 @@ from functools import partial
 class TestSolve(unittest.TestCase):
     def setUp(self):
         self.n_max = 8
-        self.n_times = 25
+        self.n_times = 10
+        self.n_X = 5
 
     def random_solve(self, solve_fun, gen_matrix):
         """
@@ -21,11 +22,12 @@ class TestSolve(unittest.TestCase):
             n = 2 ** i
             for j in range(self.n_times):
                 A = gen_matrix(n)
-                X = np.random.random(n)
-                B = np.dot(A, X)
+                for k in range(self.n_X):
+                    X = np.random.random((n, k))
+                    B = np.dot(A, X)
 
-                X_sol = solve_fun(A, B)
-                nt.assert_array_almost_equal(X, X_sol)
+                    X_sol = solve_fun(A, B)
+                    nt.assert_array_almost_equal(X, X_sol)
 
 
 class TestGe(TestSolve):

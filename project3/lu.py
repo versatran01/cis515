@@ -94,3 +94,10 @@ def rand_tridiag(n):
         np.diag(np.random.random(n)) + \
         np.diag(np.random.random(n - 1), -1)
     return A
+
+
+if __name__ == '__main__':
+    A = np.eye(2)
+    X = np.ones((2, 2))
+    B = np.dot(A, X)
+    lu_solve_scipy(A, B, tridiag=True)
