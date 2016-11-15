@@ -40,7 +40,7 @@ def lu_solve(A, B, tridiag=True):
 
         return X
 
-    return None
+    raise NotImplementedError('General lu_solve is not implemented.')
 
 
 def lu_solve_scipy(A, B, tridiag=True):

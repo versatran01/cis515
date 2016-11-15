@@ -8,29 +8,32 @@ def ge_solve(A, B, use_scipy=False):
     :param A: MxM matrix
     :param B: MxP matrix
     :param use_scipy:
-    :return: MxP matrix X such that AX=B
+    :return: MxP matrix X such that AX=B, X will have the same dimension as B
     """
     A = np.asarray(A, float)
     B = np.asarray(B, float)
 
+    squeeze = False
     if np.ndim(B) == 1:
         B = np.atleast_2d(B).T
+        squeeze = True
 
     mA, nA = np.shape(A)
     mB, nB = np.shape(B)
 
     if mA != mB:
-        raise ValueError("incompatible dimension, number of equations do not "
+        raise ValueError("Incompatible dimension, number of equations do not "
                          "match: {} != {}.".format(mA, mB))
 
     if mA != nA:
-        raise ValueError("incompatible dimension, A is not square matrix")
+        raise ValueError("Incompatible dimension, A is not square matrix")
 
     AB = np.hstack((A, B))
     ABr = gauss_elim(AB)
     Ar, Br = np.split(ABr, [nA], axis=1)
     X = back_sub(Ar, Br, use_scipy=use_scipy)
-    return X
+
+    return np.squeeze(X) if squeeze else X
 
 
 def gauss_elim(A, partial_pivot=True):
