@@ -1,14 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from project3.ge import ge_solve
-from project3.lu import lu_solve_tridiag, rand_tridiag, lu_solve_scipy
+from project3.lu import lu_solve_tridiag, rand_tridiag
 import time
-from tqdm import tqdm
 
 sizes = range(2, 300)
 iters = range(50)
 times = np.zeros((3, len(sizes)))
-for n in tqdm(sizes):
+for n in sizes:
     A = rand_tridiag(n)
     X = np.random.random([n, 1])
     B = np.dot(A, X)
@@ -27,6 +26,7 @@ for n in tqdm(sizes):
 
     times[0, n - 2] = dt_ge / len(iters)
     times[1, n - 2] = dt_lu / len(iters)
+    print(n)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)

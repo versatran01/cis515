@@ -37,19 +37,9 @@ def lu_solve_tridiag(A, B, use_scipy=True):
 
 def lu_solve_scipy(A, B):
     """
-    Scipy version of lu_solve, handles both tridiagonal and general square
-    matrices. Tridiagonal version is must faster, using
-    scipy.linalg.solve_banded
+    Scipy version of lu_solve, not optimized for tridiagonal systems
     """
     return la.lu_solve(la.lu_factor(A), B)
-
-
-def solve_tridiag(A, B):
-    """
-    Solve tridiagonal system
-    """
-    ab = banded3_from_tridiag(A)
-    return la.solve_banded((1, 1), ab, B)
 
 
 def solve_banded3(Ab, B):
@@ -57,6 +47,14 @@ def solve_banded3(Ab, B):
     Solve banded matrix with width 3
     """
     return la.solve_banded((1, 1), Ab, B)
+
+
+def solve_tridiag(A, B):
+    """
+    Solve tridiagonal system
+    """
+    ab = banded3_from_tridiag(A)
+    return solve_banded3(ab, B)
 
 
 def banded3_from_udl(u, d, l):

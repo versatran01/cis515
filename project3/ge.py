@@ -13,8 +13,11 @@ def ge_solve(A, B, use_scipy=False):
     A = np.asarray(A, float)
     B = np.asarray(B, float)
 
+    # This flags where to squeeze result in the end so that
+    # np.shape(X) == np.shape(B)
     squeeze = False
     if np.ndim(B) == 1:
+        # if B is one dimensional, make it a 2d column vector
         B = np.atleast_2d(B).T
         squeeze = True
 
@@ -28,7 +31,9 @@ def ge_solve(A, B, use_scipy=False):
     if mA != nA:
         raise ValueError("Incompatible dimension, A is not square matrix")
 
+    # Stack A and B together to make [A | B]
     AB = np.hstack((A, B))
+    # Do gaussian elimination on AB
     ABr = gauss_elim(AB)
     Ar, Br = np.split(ABr, [nA], axis=1)
     X = back_sub(Ar, Br, use_scipy=use_scipy)
