@@ -5,10 +5,23 @@ from matplotlib.lines import Line2D
 
 
 class BuilderState(Enum):
+    """
+    State of the interactive window
+    """
     add = 1
     delete = 2
     move = 3
     view = 4
+
+
+class EndCondition(Enum):
+    """
+    End condition of a bspline
+    """
+    natural = 1
+    quadratic = 2
+    bessel = 3
+    knot = 4
 
 
 class Bspline(object):
@@ -65,6 +78,7 @@ class BsplineBuilder2D(object):
 
     def on_key_press(self, event):
         if event.key == 't':
+            # toggle points
             raise NotImplementedError('t is not implemented')
         elif event.key == 'r':
             self.reset()
@@ -84,6 +98,9 @@ class BsplineBuilder2D(object):
         elif event.key == 'v':
             self.state = BuilderState.view
             self.ax_2d.set_title('view only')
+        elif event.key == 'p':
+            # show control polygon
+            raise NotImplementedError('p is not implemented')
         else:
             self.ax_2d.set_title('key: {} is not supported'.format(event.key))
 
@@ -115,6 +132,6 @@ if __name__ == '__main__':
     ax.set_aspect('equal')
 
     # Create BezierBuilder
-    bspline_builder = BsplineBuilder2D(ax)
+    # bspline_builder = BsplineBuilder2D(ax)
 
-    plt.show()
+    # plt.show()

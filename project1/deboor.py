@@ -108,18 +108,22 @@ def deboor_to_bezier(points, last_point=False):
 
     # fix segments when last point
     if last_point:
-        if n == 5:
+        if n == 4:
+            segments[0] = points
+        elif n == 5:
             # Modify last two segments, in this case there are only two
             segments[0] = deboor_1st(points[:w], t=0.5)
             segments[1] = deboor_1st(points[1:1 + w], t=0.5, flip=True)
-        if n == 6:
+        elif n == 6:
             # Modify last two segments, in this case there are only three
             segments[1] = deboor_2nd(points[1:1 + w], t=0.5)
             segments[2] = deboor_1st(points[2:2 + w], t=1 / 3.0, flip=True)
-        if n >= 7:
+        elif n >= 7:
             # Modify last two segments
             segments[-2] = deboor_2nd(points[-w - 1:-1], t=1 / 3.0, flip=True)
             segments[-1] = deboor_1st(points[-w:], t=1 / 3.0, flip=True)
+        else:
+            raise ValueError('unexpected n = {}'.format(n))
 
     return segments
 
