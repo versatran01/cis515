@@ -147,7 +147,7 @@ def knot_end_cond(X):
         d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
         d4 = 7.0 / 18 * (X[2] + X[4]) + 8.0 / 9 * X[3] - 2.0 / 3 * d2
         D = np.vstack((X[0], d0, d1, d2, d3, d4, X[-1]))
-    elif n > 6:
+    elif n >= 6:
         A = make_interp_lhs(n - 2)
         B = np.multiply(X[1:-1], 6)
         B[0] -= d1
