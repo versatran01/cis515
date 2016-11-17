@@ -130,25 +130,35 @@ def bessel_end_cond(X):
 
 def knot_end_cond(X):
     n, c = np.shape(X)
+    # N = n - 1
 
     d1 = -1.0 / 6 * (X[0] + X[2]) + 4.0 / 3 * X[1]
     dNm1 = -1.0 / 6 * (X[-3] + X[-1]) + 4.0 / 3 * X[-2]
     if n == 4:
-        d2 = -1.0 / 6 * (X[1] + X[3]) + 4.0 / 3 * X[3]
+        # N = 3, dNm1 = d2
+        d2 = dNm1
         d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
         d3 = 7.0 / 18 * (X[1] + X[3]) + 8.0 / 9 * X[2] - 2.0 / 3 * d1
-        D = np.hstack((d0, d1, d2, d3))
+        D = np.vstack((X[0], d0, d1, d2, d3, X[-1]))
     elif n == 5:
-        d3 = -1.0 / 6 * (X[2] + X[4]) + 4.0 / 3 * X[3]
+        # N = 4, dNm1 = d3
+        d3 = dNm1
         d2 = 3.0 / 2 * X[2] - 1.0 / 4 * (d1 + d3)
         d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
         d4 = 7.0 / 18 * (X[2] + X[4]) + 8.0 / 9 * X[3] - 2.0 / 3 * d2
-        D = np.hstack((d0, d1, d2, d3, d4))
+        D = np.vstack((X[0], d0, d1, d2, d3, d4, X[-1]))
     elif n > 6:
         A = make_interp_lhs(n - 2)
         B = np.multiply(X[1:-1], 6)
         B[0] -= d1
         B[-1] -= dNm1
         d = lu_solve_tridiag(A, B, True)
+
+        d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d[0]
+        dN = 7.0 / 18 * (X[-3] + X[-1]) + 8.0 / 9 * X[-2] - 2.0 / 3 * d[-1]
+
+        D = np.vstack((X[0], d0, d1, d, dNm1, dN, X[-1]))
+    else:
+        raise ValueError('n = {}'.format(n))
 
     return D

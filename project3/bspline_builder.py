@@ -14,8 +14,6 @@ class BuilderState(Enum):
     view = 4
 
 
-
-
 class Bspline(object):
     def __init__(self):
         pass
