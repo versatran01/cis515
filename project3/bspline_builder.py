@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.lines import Line2D
 from enum import Enum
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 
 class BuilderState(Enum):

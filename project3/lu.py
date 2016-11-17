@@ -5,46 +5,48 @@ from project3.ge import back_sub, forward_sub
 
 def lu_solve(A, B, tridiag=True, use_scipy=True):
     """
-
+    Solve systems of linear equations using LU decomposition
+    This version currently assumes A is tridiagonal
     :param A:
     :param B:
     :param tridiag:
+    :param use_scipy: True to use scipy.linalg.solve_triangular
     :return:
     """
-    # To do this, first implement lu_factor and then use back_sub and
-    # forward_sub to solve for X
-    if tridiag:
-        m, n = np.shape(A)
-        # Extract diagonals
-        c, b, a = banded_from_tridiag(A)
+    if not tridiag:
+        raise NotImplementedError('General lu_solve is not implemented.')
 
-        # allocate
-        # off diagonal of L
-        ddL = np.empty(n)
-        ddL[0] = 0
+    m, n = np.shape(A)
+    # Extract diagonals
+    c, b, a = banded_from_tridiag(A)
 
-        # diagonal of U
-        dU = np.empty(n)
-        dU[0] = b[0]
+    # allocate
+    # off diagonal of L
+    ddL = np.empty(n)
+    ddL[0] = 0
 
-        for i in range(1, n):
-            ddL[i] = a[i - 1] / dU[i - 1]
-            dU[i] = b[i] - ddL[i] * c[i]
+    # diagonal of U
+    dU = np.empty(n)
+    dU[0] = b[0]
 
-        L = np.eye(n) + np.diag(ddL[1:], k=-1)
-        U = np.diag(dU) + np.diag(c[1:], k=1)
+    for i in range(1, n):
+        ddL[i] = a[i - 1] / dU[i - 1]
+        dU[i] = b[i] - ddL[i] * c[i]
 
-        W = forward_sub(L, B, use_scipy=use_scipy)
-        X = back_sub(U, W, use_scipy=use_scipy)
+    L = np.eye(n) + np.diag(ddL[1:], k=-1)
+    U = np.diag(dU) + np.diag(c[1:], k=1)
 
-        return X
+    W = forward_sub(L, B, use_scipy=use_scipy)
+    X = back_sub(U, W, use_scipy=use_scipy)
 
-    raise NotImplementedError('General lu_solve is not implemented.')
+    return X
 
 
 def lu_solve_scipy(A, B, tridiag=True):
     """
-    Scipy version of lu_solve
+    Scipy version of lu_solve, handles both tridiagonal and general square
+    matrices. Tridiagonal version is must faster, using
+    scipy.linalg.solve_banded
     :param A:
     :param B:
     :param tridiag: True will use solve_banded
