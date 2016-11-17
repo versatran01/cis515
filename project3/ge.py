@@ -8,29 +8,37 @@ def ge_solve(A, B, use_scipy=False):
     :param A: MxM matrix
     :param B: MxP matrix
     :param use_scipy:
-    :return: MxP matrix X such that AX=B
+    :return: MxP matrix X such that AX=B, X will have the same dimension as B
     """
     A = np.asarray(A, float)
     B = np.asarray(B, float)
 
+    # This flags where to squeeze result in the end so that
+    # np.shape(X) == np.shape(B)
+    squeeze = False
     if np.ndim(B) == 1:
+        # if B is one dimensional, make it a 2d column vector
         B = np.atleast_2d(B).T
+        squeeze = True
 
     mA, nA = np.shape(A)
     mB, nB = np.shape(B)
 
     if mA != mB:
-        raise ValueError("incompatible dimension, number of equations do not "
+        raise ValueError("Incompatible dimension, number of equations do not "
                          "match: {} != {}.".format(mA, mB))
 
     if mA != nA:
-        raise ValueError("incompatible dimension, A is not square matrix")
+        raise ValueError("Incompatible dimension, A is not square matrix")
 
+    # Stack A and B together to make [A | B]
     AB = np.hstack((A, B))
+    # Do gaussian elimination on AB
     ABr = gauss_elim(AB)
     Ar, Br = np.split(ABr, [nA], axis=1)
     X = back_sub(Ar, Br, use_scipy=use_scipy)
-    return X
+
+    return np.squeeze(X) if squeeze else X
 
 
 def gauss_elim(A, partial_pivot=True):
@@ -56,7 +64,8 @@ def gauss_elim(A, partial_pivot=True):
             i = np.argmax(np.where(A_k[:, 0] != 0))[0]
 
         # and it cannot be zero, otherwise matrix is singular
-        assert A_k[i, 0] != 0
+        if A_k[i, 0] == 0:
+            raise ValueError('pivot is zero.')
 
         # Swap row 1 with row i of A_k
         if i != 0:
@@ -111,7 +120,7 @@ def back_sub(A, B, use_scipy=False):
     X[-1] = B[-1] / A[-1, -1]
     for i in reversed(range(mA - 1)):
         ax = np.dot(A[i, i + 1:], X[i + 1:])
-        X[i] = (B[i] - np.sum(ax, axis=0)) / A[i, i]
+        X[i] = (B[i] - ax) / A[i, i]
 
     return X
 
@@ -130,5 +139,24 @@ def forward_sub(A, B, use_scipy=False):
     if use_scipy:
         return la.solve_triangular(A, B, lower=True)
 
-        # TODO: add our own forward-substitution code
-    
+    A = np.asarray(A, float)
+    B = np.asarray(B, float)
+    X = np.empty_like(B)
+
+    mA, nA = np.shape(A)
+
+    X[0] = B[0] / A[0, 0]
+    for i in range(1, mA):
+        ax = np.dot(A[i, :i], X[:i])
+        X[i] = (B[i] - ax) / A[i, i]
+
+    return X
+
+
+def rand_square(n):
+    """
+    Random square matrix
+    :param n:
+    :return:
+    """
+    return np.random.random((n, n))

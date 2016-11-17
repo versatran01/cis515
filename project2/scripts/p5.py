@@ -1,5 +1,5 @@
 import numpy as np
-from haar_2d import haar_inv2d_n, haar2d_n
+from project2.haar_2d import haar_inv2d_n, haar2d_n
 
 A = np.array([[100, 103, 99, 97, 93, 94, 78, 73],
               [102, 97, 100, 111, 113, 104, 96, 82],

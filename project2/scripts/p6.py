@@ -4,7 +4,7 @@ import scipy.ndimage as ndi
 import matplotlib.pyplot as plt
 from scipy.misc import imresize
 
-from haar_2d import haar2d
+from project2.haar_2d import haar2d
 
 data_dir = os.path.abspath('../data')
 image_file = os.path.join(data_dir, 'durer.png')

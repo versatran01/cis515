@@ -1,4 +1,4 @@
-# CIS515 Project 1
+# CIS515 Project 2
 
 ## Names
 
