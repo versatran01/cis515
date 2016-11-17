@@ -21,7 +21,7 @@ def curve_interp(points, end_cond):
     :return:
     """
     points = np.atleast_2d(np.array(points))
-    assert len(points) >= 4
+    assert len(points) >= 3
 
     if end_cond == EndCondition.natural:
         interp_fun = natural_end_cond

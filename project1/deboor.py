@@ -214,18 +214,3 @@ def deboor_to_bezier_old(points, last_point=False):
             segments.append(b_points[-4:])
 
     return np.array(b_points), np.array(segments)
-
-
-if __name__ == '__main__':
-    dpoints = np.array(
-        [[0, 0], [0, 1], [1, 1], [1, 0], [2, 0], [2, 1], [3, 1], [3, 0],
-         [4, 0]],
-        float)
-    bpoints = deboor_to_bezier(dpoints[:6], True)
-    fig, ax = plt.subplots()
-    ax.plot(dpoints[:, 0], dpoints[:, 1], '-+')
-    for b in bpoints:
-        plt.plot(b[:, 0], b[:, 1], linewidth=2)
-    ax.margins(x=.1, y=.1)
-    ax.set_aspect('equal')
-    plt.show()
