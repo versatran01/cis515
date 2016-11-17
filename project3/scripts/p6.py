@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from project3.ge import ge_solve
-from project3.lu import lu_solve, rand_tridiag, lu_solve_scipy
+from project3.lu import lu_solve_tridiag, rand_tridiag, lu_solve_scipy
 import time
 from tqdm import tqdm
 
@@ -22,7 +22,7 @@ for n in tqdm(sizes):
 
         # time the lu_solve function
         t0 = time.time()
-        lu_solve(A, B, tridiag=True)
+        lu_solve_tridiag(A, B)
         dt_lu += (time.time() - t0) * 100
 
     times[0, n - 2] = dt_ge / len(iters)
