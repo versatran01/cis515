@@ -14,14 +14,6 @@ class BuilderState(Enum):
     view = 4
 
 
-class EndCondition(Enum):
-    """
-    End condition of a bspline
-    """
-    natural = 1
-    quadratic = 2
-    bessel = 3
-    knot = 4
 
 
 class Bspline(object):

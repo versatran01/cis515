@@ -128,11 +128,6 @@ def deboor_to_bezier(points, last_point=False):
     return segments
 
 
-class DeBoor:
-    def __init__(self):
-        pass
-
-
 def deboor_to_bezier_old(points, last_point=False):
     """
     Old dboor_to_beizer

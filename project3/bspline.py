@@ -1,10 +1,25 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from project3.bspline_builder import EndCondition
-from project3.lu import lu_solve_tridiag, tridiag_from_udl
+from enum import Enum
+from project3.lu import tridiag_from_udl, lu_solve_tridiag
+
+
+class EndCondition(Enum):
+    """
+    End condition of a bspline
+    """
+    natural = 1
+    quadratic = 2
+    bessel = 3
+    knot = 4
 
 
 def curve_interp(points, end_cond):
+    """
+    Interpolate data points using bspline by generating deBoor control points
+    :param points:
+    :param end_cond:
+    :return:
+    """
     points = np.atleast_2d(np.array(points))
     assert len(points) >= 4
 
@@ -23,6 +38,14 @@ def curve_interp(points, end_cond):
 
 
 def make_deboor(X, d, d0, dN):
+    """
+    Helper function to make deBoor control points
+    :param X:
+    :param d: d_1 to d_N-1
+    :param d0:
+    :param dN:
+    :return:
+    """
     n, c = np.shape(X)
 
     D = np.empty((n + 2, c))
@@ -105,25 +128,27 @@ def bessel_end_cond(X):
     return D
 
 
-def knot_end_cond():
-    pass
+def knot_end_cond(X):
+    n, c = np.shape(X)
 
+    d1 = -1.0 / 6 * (X[0] + X[2]) + 4.0 / 3 * X[1]
+    dNm1 = -1.0 / 6 * (X[-3] + X[-1]) + 4.0 / 3 * X[-2]
+    if n == 4:
+        d2 = -1.0 / 6 * (X[1] + X[3]) + 4.0 / 3 * X[3]
+        d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
+        d3 = 7.0 / 18 * (X[1] + X[3]) + 8.0 / 9 * X[2] - 2.0 / 3 * d1
+        D = np.hstack((d0, d1, d2, d3))
+    elif n == 5:
+        d3 = -1.0 / 6 * (X[2] + X[4]) + 4.0 / 3 * X[3]
+        d2 = 3.0 / 2 * X[2] - 1.0 / 4 * (d1 + d3)
+        d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
+        d4 = 7.0 / 18 * (X[2] + X[4]) + 8.0 / 9 * X[3] - 2.0 / 3 * d2
+        D = np.hstack((d0, d1, d2, d3, d4))
+    elif n > 6:
+        A = make_interp_lhs(n - 2)
+        B = np.multiply(X[1:-1], 6)
+        B[0] -= d1
+        B[-1] -= dNm1
+        d = lu_solve_tridiag(A, B, True)
 
-points_x = [0, 0, 1, 1, 2, 2]
-points_y = [0, 1, 1, 0, 1, 0]
-s = 6
-
-X = np.vstack((points_x[:s], points_y[:s])).T
-X = np.array(X, float)
-D = natural_end_cond(X)
-Dx, Dy = D.T
-
-fig, ax = plt.subplots()
-fig.set_facecolor('w')
-
-ax.plot(points_x, points_y, 'o-')
-ax.plot(Dx, Dy, 'o-')
-ax.set_aspect('equal')
-ax.grid(True)
-
-plt.show()
+    return D
