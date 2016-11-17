@@ -10,7 +10,7 @@ class EndCondition(Enum):
     natural = 1
     quadratic = 2
     bessel = 3
-    knot = 4
+    notaknot = 4
 
 
 def curve_interp(points, end_cond):
@@ -29,8 +29,8 @@ def curve_interp(points, end_cond):
         interp_fun = quadratic_end_cond
     elif end_cond == EndCondition.bessel:
         interp_fun = bessel_end_cond
-    elif end_cond == EndCondition.knot:
-        interp_fun = knot_end_cond
+    elif end_cond == EndCondition.notaknot:
+        interp_fun = notaknot_end_cond
     else:
         raise ValueError("Unsupported end condition")
 
@@ -128,13 +128,18 @@ def bessel_end_cond(X):
     return D
 
 
-def knot_end_cond(X):
+def notaknot_end_cond(X):
     n, c = np.shape(X)
     # N = n - 1
 
     d1 = -1.0 / 6 * (X[0] + X[2]) + 4.0 / 3 * X[1]
     dNm1 = -1.0 / 6 * (X[-3] + X[-1]) + 4.0 / 3 * X[-2]
-    if n == 4:
+    if n == 3:
+        # N = 2, dNm1 = d1
+        d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d1
+        d2 = d0
+        D = np.vstack((X[0], d0, d1, d2, X[-1]))
+    elif n == 4:
         # N = 3, dNm1 = d2
         d2 = dNm1
         d0 = 7.0 / 18 * (X[0] + X[2]) + 8.0 / 9 * X[1] - 2.0 / 3 * d2
@@ -148,8 +153,8 @@ def knot_end_cond(X):
         d4 = 7.0 / 18 * (X[2] + X[4]) + 8.0 / 9 * X[3] - 2.0 / 3 * d2
         D = np.vstack((X[0], d0, d1, d2, d3, d4, X[-1]))
     elif n >= 6:
-        A = make_interp_lhs(n - 2)
-        B = np.multiply(X[1:-1], 6)
+        A = make_interp_lhs(n - 4)
+        B = np.multiply(X[2:-2], 6)
         B[0] -= d1
         B[-1] -= dNm1
         d = lu_solve_tridiag(A, B, True)
