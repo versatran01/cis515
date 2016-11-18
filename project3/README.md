@@ -12,6 +12,10 @@
 * python 2.7/3.5
 * numpy, scipy, matplotlib
 
+## Video
+
+https://youtu.be/bGGjKjAN238
+
 ## Instructions
 
 `tests` folder contains unittests for all the functions implemented for this project. Test coverage is 92%.
