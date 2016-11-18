@@ -31,6 +31,9 @@ class BsplineBuilder2D(object):
         # Use subdivison algorithm to create bezier points
         self.bezier = BezierSubdivision()
 
+        # ind to move
+        self.ind = None
+
         # Data points
         self.x = []
         self.y = []
@@ -42,7 +45,7 @@ class BsplineBuilder2D(object):
 
         # DeBoor points
         self.deboor_style = {'marker': '.', 'linestyle': '--',
-                             'markersize': 10, 'color': 'b'}
+                             'markersize': 10, 'color': 'm'}
         deboor_2d = Line2D([], [], **self.deboor_style)
         self.line_deboor_2d = self.ax_2d.add_line(deboor_2d)
 
@@ -52,11 +55,16 @@ class BsplineBuilder2D(object):
         self.line_bspline_2d = self.ax_2d.add_line(bspline_2d)
 
         # Callbacks
+        self.cid_draw = self.canvas.mpl_connect('draw_event', self.on_draw)
         self.cid_button_press = self.canvas.mpl_connect('button_press_event',
                                                         self.on_button_press)
         self.cid_key_press = self.canvas.mpl_connect('key_press_event',
                                                      self.on_key_press)
-        self.cid_on_draw = self.canvas.mpl_connect('draw_event', self.on_draw)
+        self.cid_button_release = self.canvas.mpl_connect(
+            'button_release_event',
+            self.on_button_release)
+        self.cid_motion_notify = self.canvas.mpl_connect('motion_notify_event',
+                                                         self.on_motion_notify)
 
     def add_points(self, event):
         # Add control point
@@ -75,9 +83,6 @@ class BsplineBuilder2D(object):
             self.x.pop(ind)
             self.y.pop(ind)
             self.update_lines()
-
-    def move_points(self, event):
-        pass
 
     @property
     def n_points(self):
@@ -161,7 +166,7 @@ class BsplineBuilder2D(object):
         elif self.state == BuilderState.delete:
             self.delete_points(event)
         elif self.state == BuilderState.move:
-            pass
+            self.ind = self.get_ind_under_click(event)
 
         # Draw canvas
         self.canvas.draw()
@@ -195,8 +200,43 @@ class BsplineBuilder2D(object):
 
         self.canvas.draw()
 
+    def on_motion_notify(self, event):
+        if self.state is not BuilderState.move:
+            return
+
+        if self.ind is None:
+            return
+
+        if event.inaxes != self.ax_2d:
+            return
+
+        self.x[self.ind] = event.xdata
+        self.y[self.ind] = event.ydata
+        self.update_lines()
+        self.line_bspline_2d.set_color('r')
+
+        # Speed update drawing
+        self.canvas.restore_region(self.background)
+        self.ax_2d.draw_artist(self.line_points_2d)
+        self.ax_2d.draw_artist(self.line_deboor_2d)
+        self.ax_2d.draw_artist(self.line_bspline_2d)
+        self.canvas.blit(self.ax_2d.bbox)
+
     def on_draw(self, event):
         self.background = self.canvas.copy_from_bbox(self.ax_2d.bbox)
+
+    def on_button_release(self, event):
+        if self.state is not BuilderState.move:
+            return
+        if event.inaxes != self.ax_2d:
+            return
+        if self.ind is None:
+            return
+
+        self.ind = None
+        self.line_bspline_2d.set_color(self.bspline_style['color'])
+        self.update_lines()
+        self.canvas.draw()
 
 
 if __name__ == '__main__':
