@@ -137,6 +137,7 @@ class BsplineBuilder2D(object):
         self.y = []
         self.line_points_2d.set_data([], [])
         self.line_deboor_2d.set_data([], [])
+        self.line_bspline_2d.set_data([], [])
         self.ax_2d.set_title('reset, press [a] to start adding points')
 
     def undo_add(self):
@@ -196,7 +197,28 @@ class BsplineBuilder2D(object):
             v = self.line_deboor_2d.get_visible()
             self.line_deboor_2d.set_visible(not v)
         else:
-            self.ax_2d.set_title('key: {} is not supported'.format(event.key))
+            try:
+                i = int(event.key)
+                if i == 1:
+                    self.end_cond = EndCondition.natural
+                    self.ax_2d.set_title('natural end condition')
+                elif i == 2:
+                    self.end_cond = EndCondition.quadratic
+                    self.ax_2d.set_title('quadratic end condition')
+                elif i == 3:
+                    self.end_cond = EndCondition.bessel
+                    self.ax_2d.set_title('bessel end condition')
+                elif i == 4:
+                    self.end_cond = EndCondition.notaknot
+                    self.ax_2d.set_title('not-a-knot end condition')
+                else:
+                    self.ax_2d.set_title(
+                        'end condition: {} is not supported'.format(event.key))
+
+                self.update_lines()
+            except ValueError as e:
+                self.ax_2d.set_title(
+                    'key: {} is not supported'.format(event.key))
 
         self.canvas.draw()
 
