@@ -21,6 +21,7 @@ class BsplineBuilder2D(object):
     def __init__(self, ax_2d):
         self.ax_2d = ax_2d
         self.canvas = self.ax_2d.figure.canvas
+        self.background = None
         # Default to add new points
         self.state = BuilderState.add
 
@@ -55,6 +56,7 @@ class BsplineBuilder2D(object):
                                                         self.on_button_press)
         self.cid_key_press = self.canvas.mpl_connect('key_press_event',
                                                      self.on_key_press)
+        self.cid_on_draw = self.canvas.mpl_connect('draw_event', self.on_draw)
 
     def add_points(self, event):
         # Add control point
@@ -65,6 +67,17 @@ class BsplineBuilder2D(object):
 
         self.ax_2d.set_title('add point [{0}]: ({1:.2f}, {2:.2f})'.format(
             self.n_points, event.xdata, event.ydata))
+
+    def delete_points(self, event):
+        ind = self.get_ind_under_click(event)
+        if ind is not None:
+            print(ind)
+            self.x.pop(ind)
+            self.y.pop(ind)
+            self.update_lines()
+
+    def move_points(self, event):
+        pass
 
     @property
     def n_points(self):
@@ -101,6 +114,19 @@ class BsplineBuilder2D(object):
             P = self.create_bspline(D)
             self.line_bspline_2d.set_data(P[:, 0], P[:, 1])
 
+    def get_ind_under_click(self, event, eps=5):
+        if self.n_points == 0:
+            return None
+
+        x = np.array(self.x)
+        y = np.array(self.y)
+        d = (x - event.xdata) ** 2 + (y - event.ydata) ** 2
+        ind = d.argmin()
+        if d[ind] >= eps ** 2:
+            ind = None
+
+        return ind
+
     def reset(self):
         self.x = []
         self.y = []
@@ -133,7 +159,7 @@ class BsplineBuilder2D(object):
         elif self.state == BuilderState.add:
             self.add_points(event)
         elif self.state == BuilderState.delete:
-            pass
+            self.delete_points(event)
         elif self.state == BuilderState.move:
             pass
 
@@ -161,13 +187,16 @@ class BsplineBuilder2D(object):
         elif event.key == 'v':
             self.state = BuilderState.view
             self.ax_2d.set_title('view only')
-        elif event.key == 'p':
-            # show control polygon
-            raise NotImplementedError('p is not implemented')
+        elif event.key == 'h':
+            v = self.line_deboor_2d.get_visible()
+            self.line_deboor_2d.set_visible(not v)
         else:
             self.ax_2d.set_title('key: {} is not supported'.format(event.key))
 
         self.canvas.draw()
+
+    def on_draw(self, event):
+        self.background = self.canvas.copy_from_bbox(self.ax_2d.bbox)
 
 
 if __name__ == '__main__':
