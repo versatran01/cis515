@@ -79,7 +79,6 @@ class BsplineBuilder2D(object):
     def delete_points(self, event):
         ind = self.get_ind_under_click(event)
         if ind is not None:
-            print(ind)
             self.x.pop(ind)
             self.y.pop(ind)
             self.update_lines()
@@ -125,7 +124,9 @@ class BsplineBuilder2D(object):
 
         x = np.array(self.x)
         y = np.array(self.y)
-        d = (x - event.xdata) ** 2 + (y - event.ydata) ** 2
+        xy = np.vstack((x, y))
+        x_pix, y_pix = self.ax_2d.transData.transform(xy.T).T
+        d = np.sqrt((x_pix - event.x) ** 2 + (y_pix - event.y) ** 2)
         ind = d.argmin()
         if d[ind] >= eps ** 2:
             ind = None
@@ -259,15 +260,3 @@ class BsplineBuilder2D(object):
         self.line_bspline_2d.set_color(self.bspline_style['color'])
         self.update_lines()
         self.canvas.draw()
-
-
-if __name__ == '__main__':
-    # Initial setup
-    fig = plt.figure(facecolor='white')
-    ax = fig.add_subplot(111)
-    ax.set_aspect('equal')
-
-    # Create BezierBuilder
-    bspline_builder = BsplineBuilder2D(ax)
-
-    plt.show()
