@@ -13,7 +13,7 @@ image = ndi.imread(image_file)
 image = imresize(image, size=(512, 512))
 image = np.array(image, float)
 
-ks = range(4)
+ks = range(6)
 fig, axarr = plt.subplots(2, 2)
 fig.set_facecolor('w')
 axarr = np.ravel(axarr)
