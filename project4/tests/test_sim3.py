@@ -2,25 +2,45 @@ import unittest
 import numpy as np
 import numpy.testing as nt
 from project4.sim3 import sim3_exp_SIM3, vee_sim3_R7, hat_R7_sim3
+from scipy.linalg import expm
+from project4.so3 import R3_exp_SO3
+
 
 class TestSim3(unittest.TestCase):
-
     def setUp(self):
-        self.R0 = np.eye(3)
-        self.w0 = np.zeros(3)
-        self.R1 = np.diag([1.0, -1, -1])
-        self.w1 = np.array([np.pi, 0, 0])
+        self.B1 = np.array([[1., 0., 0., 1.],  # theta = 0 and lambda = 1
+                            [0., 1., 0., 1.],
+                            [0., 0., 1., 1.],
+                            [0., 0., 0., 0.]], np.float)
+
+        self.B2 = np.array([[0., 0., 0., 1.],  # theta = 0 and lambda = 0
+                            [0., 0., 0., 2.],
+                            [0., 0., 0., 1.],
+                            [0., 0., 0., 0.]], np.float)
+
+        self.B3 = np.array([[0., -0.1, 0., 1.],  # theta != 0 and lambda = 0
+                            [0.1, 0., 0., 2.],
+                            [0., 0., 0., 1.],
+                            [0., 0., 0., 0.]], np.float)
+
+        self.B4 = np.array([[1., -.01, .01, 1.],  # theta != 0 and lambda != 0
+                            [.01, 1., -.01, 2.],
+                            [-.01, .01, 1., 1.],
+                            [0., 0., 0., 0.]], np.float)
+
+        self.e_B1 = expm(self.B1)
+        self.e_B2 = expm(self.B2)
+        self.e_B3 = expm(self.B3)
+        self.e_B4 = expm(self.B4)
 
     def test_sim3_exp_SIM3(self):
-        # put in testing code
+        nt.assert_almost_equal(sim3_exp_SIM3(self.B1), self.e_B1, decimal=2)
+        nt.assert_almost_equal(sim3_exp_SIM3(self.B2), self.e_B2, decimal=2)
+        nt.assert_almost_equal(sim3_exp_SIM3(self.B3), self.e_B3, decimal=2)
+        nt.assert_almost_equal(sim3_exp_SIM3(self.B4), self.e_B4, decimal=2)
 
     def test_vee_sim3_R7(self):
-        # put in testing code
+        pass
 
     def test_hat_R7_sim3(self):
-        # put in testing code
-
-
-
-
-
+        pass
