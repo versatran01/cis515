@@ -52,18 +52,20 @@ def vee_map3(so3):
 
 def so3_exp_r3(w):
     """
-    Exponential map of R3 -> so3 -> SO3
+    Exponential map R3 -> so3 -> SO3
     [R3  -> so3]    w_x = hat_map(w)
     [so3 -> SO3]    exp(w) = I + A * w_x + B * w_x^2
                     A = sin(theta) / theta
                     B = (1 - cos(theta)) / theta^2
     :param w: R3, 1x3 vector
-    :return: SO3
+    :return: SO3, 3x3 special orthogonal matrix
     """
     theta2 = np.inner(w, w)
     theta = np.sqrt(theta2)
 
     if np.isclose(theta2, 0.0):
+        # When theta^2 is close to 0, we take the limit of exponential map
+        # with theta -> 0
         A = 1.0
         B = 0.5
     else:
@@ -80,8 +82,18 @@ def so3_exp_r3(w):
 
 
 def so3_exp_so3(so3):
+    """
+    Exponential map so3 -> SO3
+    :param so3: so3, 3x3 skew-symmetric matrix
+    :return: SO3, 3x3 special orthogonal matrix
+    """
     return so3_exp_r3(vee_map3(so3))
 
 
 def SO3_log(SO3):
-    pass
+    """
+    Logarithm map SO3 -> so3
+    :param SO3:
+    :return:
+    """
+    c = (np.trace(SO3) - 1.0) / 2.0
