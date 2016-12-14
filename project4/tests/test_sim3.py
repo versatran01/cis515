@@ -8,6 +8,7 @@ from project4.so3 import R3_exp_SO3
 
 class TestSim3(unittest.TestCase):
     def setUp(self):
+        self.n_times = 50
         self.B1 = np.array([[1., 0., 0., 1.],  # theta = 0 and lambda = 1
                             [0., 1., 0., 1.],
                             [0., 0., 1., 1.],
@@ -39,8 +40,8 @@ class TestSim3(unittest.TestCase):
         nt.assert_almost_equal(sim3_exp_SIM3(self.B3), self.e_B3, decimal=3)
         #nt.assert_almost_equal(sim3_exp_SIM3(self.B4), self.e_B4, decimal=2)
 
-    def test_vee_sim3_R7(self):
-        pass
-
-    def test_hat_R7_sim3(self):
-        pass
+    def test_hat_vee_random(self):
+        for n in range(self.n_times):
+            r7 = np.random.random(7)
+            sim3 = hat_R7_sim3(r7)
+            nt.assert_array_equal(r7, vee_sim3_R7(sim3))
