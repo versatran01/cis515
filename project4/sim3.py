@@ -1,6 +1,5 @@
 import numpy as np
 from project4.so3 import hat_R3_so3, vee_so3_R3
-from math import exp, cos, sin
 
 
 def SIM3_log_sim3(SIM3):
@@ -26,43 +25,44 @@ def sim3_exp_SIM3(sim3):
     lmda, a, b, c, x, y, z = r7
     theta = (a ** 2 + b ** 2 + c ** 2) ** 0.5  # compute theta
     omega = hat_R3_so3([a, b, c])  # compute omega matrix
-
-    W = np.array([x, y, z])
+    W = np.array([x, y, z], dtype=float)
 
     if np.isclose(lmda, 0.0) and np.isclose(theta, 0.0):  # both lambda = 0 and theta = 0
         V = np.eye(3)
-        e_gamma = exp(lmda) * np.eye(3)
+        e_gamma = np.exp(lmda) * np.eye(3)
 
     elif not np.isclose(lmda, 0.0) and np.isclose(theta, 0.0):  # lambda != 0 and theta = 0
-        V = ((exp(lmda) - 1) / lmda) * np.eye(3)
-        e_gamma = exp(lmda) * np.eye(3)
+        V = ((np.exp(lmda) - 1) / lmda) * np.eye(3)
+        e_gamma = np.exp(lmda) * np.eye(3)
 
     elif np.isclose(lmda, 0.0) and not np.isclose(theta, 0.0):  # lambda = 0 and theta != 0
-        V = np.eye(3) + ((1 - np.cos(theta)) / (theta ** 2)) * omega
+        V = np.eye(3, dtype=float) + ((1 - np.cos(theta)) / (theta ** 2)) * omega
         + ((theta - np.sin(theta)) / (theta ** 3)) * omega * omega
 
-        e_gamma = exp(lmda) * (
+        print(lmda)
+
+        e_gamma = np.exp(lmda) * (
             np.eye(3) + (np.sin(theta) / theta) * omega + ((1 - np.cos(theta)) / (theta ** 2)) * omega * omega)
 
     elif not np.isclose(lmda, 0.0) and not np.isclose(theta, 0.0):  # lambda != 0 and theta != 0
 
-        v_1 = ((exp(lmda) - 1) / lmda) * np.eye(3)
+        v_1 = ((np.exp(lmda) - 1) / lmda) * np.eye(3)
 
-        v_2 = ((theta * (1 - exp(lmda) * cos(theta)) + exp(lmda) * lmda * sin(theta)) / (
+        v_2 = ((theta * (1 - np.exp(lmda) * np.cos(theta)) + np.exp(lmda) * lmda * np.sin(theta)) / (
             theta * (lmda ** 2 + theta ** 2))) * omega
 
-        v_3a = (exp(lmda) - 1) / (lmda * theta ** 2)
+        v_3a = (np.exp(lmda) - 1) / (lmda * theta ** 2)
 
-        v_3b = exp(lmda) * sin(theta) / (theta * (lmda ** 2 + theta ** 2))
+        v_3b = np.exp(lmda) * np.sin(theta) / (theta * (lmda ** 2 + theta ** 2))
 
-        v_3c = lmda * (exp(lmda) * cos(theta) - 1) / (theta ** 2 * (lmda ** 2 + theta ** 2))
+        v_3c = lmda * (np.exp(lmda) * np.cos(theta) - 1) / (theta ** 2 * (lmda ** 2 + theta ** 2))
 
         v_3 = (v_3a - v_3b - v_3c) * omega * omega
 
         V = v_1 + v_2 + v_3
-        e_gamma = exp(lmda) * (
-            np.eye(3) + (sin(theta) / theta) * omega + (
-                (1 - cos(theta)) / theta ** 2) * omega * omega)  # now compute the final matrix in SIM3
+        e_gamma = np.exp(lmda) * (
+            np.eye(3) + (np.sin(theta) / theta) * omega + (
+                (1 - np.cos(theta)) / theta ** 2) * omega * omega)  # now compute the final matrix in SIM3
 
 
     B = np.zeros([4, 4])
