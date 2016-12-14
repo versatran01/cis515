@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
-from project4.so3 import R3_exp_SO3, so3_exp_SO3, SO3_log_so3, SO3_log_R3
+from project4.so3 import R3_exp_SO3, SO3_log_R3, hat_R3_so3, vee_so3_R3
 
 
 class TestSo3(unittest.TestCase):
@@ -46,3 +46,9 @@ class TestSo3(unittest.TestCase):
             w /= wn * np.pi
             w0 = SO3_log_R3(R3_exp_SO3(w))
             nt.assert_array_almost_equal(w, w0)
+
+    def test_hat_vee_random(self):
+        for n in range(self.n_times):
+            r3 = np.random.random(3)
+            so3 = hat_R3_so3(r3)
+            nt.assert_array_equal(r3, vee_so3_R3(so3))
