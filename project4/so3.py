@@ -17,7 +17,17 @@ def skew_sqrt(R):
     R = np.array(R, dtype=float)
     I = np.eye(3)
     S = (R - I) / 2.0
-    b2, c2, d2 = np.diag(S) + 1.0
+    SI = S + I
+    # SI is a matrix with [b^2, c^2, d^2] along the diagonal
+    bcd2 = np.diag(SI)
+    # Get the maximum value for [b62, c^2, d^2], which is guaranteed to be
+    # nonzero
+    ind = np.argmax(bcd2)
+    k = np.sqrt(bcd2[ind])
+    # k has to be positive
+    assert k > 0
+    bcd = SI[ind] / k
+    return hat_map3(bcd)
 
 
 def hat_map3(w):
@@ -94,6 +104,26 @@ def SO3_log(SO3):
     """
     Logarithm map SO3 -> so3
     :param SO3:
-    :return:
+    :return: so3, 3x3 skew-symmetric matrix
     """
-    c = (np.trace(SO3) - 1.0) / 2.0
+    R = np.array(SO3, dtype=float)
+    # cos(theta)
+    c = (np.trace(R) - 1.0) / 2.0
+
+    if c == 1:
+        # case R = I, cos(theta) = 1, w = [0, 0, 0]
+        return np.zeros((3, 3), float)
+    elif np.isclose(c, -1.0):
+        # case R != I, tr(R) = -1, cos(theta) = -1
+        return skew_sqrt(R)
+    else:
+        # case R != I, tr(R) != -1
+        # wx = theta / sin(theta) * (R - R^T)
+        theta = np.arccos(c)
+        # arccos guarantees that theta is between 0 to pi
+        if np.isclose(theta, 0.0):
+            # theta is close to 0, take limit of theta -> 0
+            k = 1.0 / 2
+        else:
+            k = theta / np.sin(theta)
+        return k * (R - R.T)
