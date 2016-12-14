@@ -1,21 +1,13 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from project4.shape import torus
 
-n = 100
-
-theta = np.linspace(0, 2. * np.pi, n)
-phi = np.linspace(0, 2. * np.pi, n)
-theta, phi = np.meshgrid(theta, phi)
-c, a = 2, 1
-x = (c + a * np.cos(theta)) * np.cos(phi)
-y = (c + a * np.cos(theta)) * np.sin(phi)
-z = a * np.sin(theta)
+x, y, z = torus(2, 1, 100)
 
 fig = plt.figure()
 ax1 = fig.add_subplot(121, projection='3d')
 ax1.set_zlim(-3, 3)
-ax1.plot_surface(x, y, z, rstride=5, cstride=5, color='k', edgecolors='w')
+ax1.plot_surface(x, y, z, rstride=10, cstride=10, color='k', edgecolors='w')
 ax1.view_init(36, 26)
 ax1.set_aspect('equal')
 ax2 = fig.add_subplot(122, projection='3d')
