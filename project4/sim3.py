@@ -11,6 +11,10 @@ def SIM3_log_sim3(SIM3):
     pass
 
 
+def SIM3_log_R7(SIM3):
+    pass
+
+
 def sim3_exp_SIM3(sim3):
     """
     Exponential map sim3 -> SIM3
@@ -26,6 +30,10 @@ def sim3_exp_SIM3(sim3):
 
 
 
+    pass
+
+
+def sim3_exp_R7(R7):
     pass
 
 
