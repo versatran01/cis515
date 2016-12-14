@@ -27,10 +27,10 @@ def skew_sqrt(R):
     # k has to be positive
     assert k > 0
     bcd = SI[ind] / k
-    return hat_map3(bcd)
+    return hat_R3_so3(bcd)
 
 
-def hat_map3(w):
+def hat_R3_so3(w):
     """
     Hat operator R3 -> so(3)
     Create skew symmetric matrix [v]x from vector v
@@ -45,7 +45,7 @@ def hat_map3(w):
                      [-wy, wx, 0]], np.float)
 
 
-def vee_map3(so3):
+def vee_so3_R3(so3):
     """
     Vee operator so(3) -> R3
     :param so3: so(3), 3x3 skew-symmetric matrix
@@ -60,7 +60,7 @@ def vee_map3(so3):
     return np.array([wx, wy, wz])
 
 
-def r3_exp_SO3(w):
+def R3_exp_SO3(w):
     """
     Exponential map R3 -> so3 -> SO3
     [R3  -> so3]    w_x = hat_map(w)
@@ -83,7 +83,7 @@ def r3_exp_SO3(w):
         B = (1 - np.cos(theta)) / theta2
 
     I = np.eye(3)
-    wx = hat_map3(w)
+    wx = hat_R3_so3(w)
     wx2 = np.dot(wx, wx)
 
     R = I + A * wx + B * wx2
@@ -97,7 +97,7 @@ def so3_exp_SO3(so3):
     :param so3: so3, 3x3 skew-symmetric matrix
     :return: SO3, 3x3 special orthogonal matrix
     """
-    return r3_exp_SO3(vee_map3(so3))
+    return R3_exp_SO3(vee_so3_R3(so3))
 
 
 def SO3_log_so3(SO3):
@@ -129,9 +129,9 @@ def SO3_log_so3(SO3):
         return k * (R - R.T)
 
 
-def SO3_log_r3(SO3):
+def SO3_log_R3(SO3):
     """
     :param SO3:
     :return:
     """
-    return vee_map3(SO3_log_so3(SO3))
+    return vee_so3_R3(SO3_log_so3(SO3))
