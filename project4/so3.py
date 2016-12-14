@@ -60,7 +60,7 @@ def vee_map3(so3):
     return np.array([wx, wy, wz])
 
 
-def so3_exp_r3(w):
+def r3_exp_SO3(w):
     """
     Exponential map R3 -> so3 -> SO3
     [R3  -> so3]    w_x = hat_map(w)
@@ -91,16 +91,16 @@ def so3_exp_r3(w):
     return R
 
 
-def so3_exp_so3(so3):
+def so3_exp_SO3(so3):
     """
     Exponential map so3 -> SO3
     :param so3: so3, 3x3 skew-symmetric matrix
     :return: SO3, 3x3 special orthogonal matrix
     """
-    return so3_exp_r3(vee_map3(so3))
+    return r3_exp_SO3(vee_map3(so3))
 
 
-def SO3_log(SO3):
+def SO3_log_so3(SO3):
     """
     Logarithm map SO3 -> so3
     :param SO3:
@@ -115,7 +115,7 @@ def SO3_log(SO3):
         return np.zeros((3, 3), float)
     elif np.isclose(c, -1.0):
         # case R != I, tr(R) = -1, cos(theta) = -1
-        return skew_sqrt(R)
+        return skew_sqrt(R) * np.pi
     else:
         # case R != I, tr(R) != -1
         # wx = theta / sin(theta) * (R - R^T)
@@ -127,3 +127,11 @@ def SO3_log(SO3):
         else:
             k = theta / np.sin(theta)
         return k * (R - R.T)
+
+
+def SO3_log_r3(SO3):
+    """
+    :param SO3:
+    :return:
+    """
+    return vee_map3(SO3_log_so3(SO3))
