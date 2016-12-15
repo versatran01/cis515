@@ -74,9 +74,6 @@ def R3_exp_SO3(w):
     theta = np.sqrt(theta2)
     I = np.eye(3)
 
-    if theta == 0.0:
-        return I
-
     if np.isclose(theta, 0.0):
         # When cos(theta) -> 1, theta -> 0, we take the limit of
         # exponential map with theta -> 0
@@ -146,7 +143,11 @@ def rand_rvec():
     Uniform sampling of rotation vector, norm in [0, np.pi)
     :return:
     """
-    pass
+    r3 = np.random.random(3)
+    r3 /= np.linalg.norm(r3)
+    n = np.random.uniform(0, np.pi)
+
+    return r3 * n
 
 
 def rand_SO3():
