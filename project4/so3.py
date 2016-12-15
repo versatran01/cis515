@@ -139,3 +139,31 @@ def SO3_log_R3(SO3):
     :return:
     """
     return vee_so3_R3(SO3_log_so3(SO3))
+
+
+def rand_rvec():
+    """
+    Uniform sampling of rotation vector, norm in [0, np.pi)
+    :return:
+    """
+    pass
+
+
+def rand_SO3():
+    """
+    Uniform sampling of SO3
+    :return: 3x3 special orthogonal matrix
+    """
+    phi = np.random.uniform(0, np.pi * 2)
+    theta = np.random.uniform(0, np.pi * 2)
+    rou = np.sqrt(np.random.uniform())
+    n = np.array([rou * np.cos(phi), rou * np.sin(phi), np.sqrt(1 - rou ** 2)])
+    M1 = 2 * np.outer(n, n) - np.identity(3)
+
+    c = np.cos(theta)
+    s = np.sin(theta)
+    M2 = np.array([[c, -s, 0],
+                   [s, c, 0],
+                   [0, 0, 1]], float)
+
+    return np.dot(M1, M2)

@@ -16,18 +16,17 @@ def SIM3_log_R7(SIM3):
     pass
 
 
-def sim3_exp_SIM3(sim3):
+def sim3_exp_R7(R7):
     """
-    Exponential map sim3 -> SIM3
-    :param sim3: 4x4 matrix
+    Exponential map R7 -> sim3 -> SIM3
+    :param R7: 1x7 vector
     :return: SIM3, 4x4 matrix
     """
-    r7 = vee_sim3_R7(sim3)  # get r7 representation
-    s, a, b, c, x, y, z = r7
+    s, a, b, c, x, y, z = R7
     w = [a, b, c]
     u = [x, y, z]
     # t = theta
-    t2 = a ** 2 + b ** 2 + c ** 2
+    t2 = np.inner(w, w)
     t = np.sqrt(t2)
     t3 = t2 * t
 
@@ -79,8 +78,13 @@ def sim3_exp_SIM3(sim3):
     return B
 
 
-def sim3_exp_R7(R7):
-    pass
+def sim3_exp_SIM3(sim3):
+    """
+    exponential map sim3 -> SIM3
+    :param sim3:
+    :return:
+    """
+    return sim3_exp_R7(vee_sim3_R7(sim3))
 
 
 def hat_R7_sim3(R7):

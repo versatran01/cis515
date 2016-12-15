@@ -2,6 +2,31 @@ import unittest
 import numpy as np
 import numpy.testing as nt
 from project4.so3 import R3_exp_SO3, SO3_log_R3, hat_R3_so3, vee_so3_R3
+from scipy.linalg import expm, logm
+
+
+class TestExpmLogm(unittest.TestCase):
+    def setUp(self):
+        self.n_times = 10
+
+    def random_expm(self, rand_fun, expm_fun, hat_fun):
+        for n in range(self.n_times):
+            r = rand_fun()
+            rx = hat_fun(r)
+            exp_r = expm_fun(rx)
+            nt.assert_array_equal(expm(rx), exp_r)
+
+    def random_logm(self, rand_fun, logm_fun):
+        for n in range(self.n_times):
+            R = rand_fun()
+            log_R = logm_fun(R)
+            nt.assert_array_almost_equal(logm(R), log_R)
+
+    def random_expm_logm(self):
+        pass
+
+    def random_hat_vee(self):
+        pass
 
 
 class TestSo3(unittest.TestCase):
