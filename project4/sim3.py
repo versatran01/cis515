@@ -1,7 +1,7 @@
 import numpy as np
 from project4.so3 import (R3_hat_so3, R3_exp_SO3, SO3_log_R3,
                           rand_R3_ism_so3)
-from math import exp, sin, cos, isclose
+from math import exp, sin, cos
 
 
 def SIM3_log_sim3(SIM3):
@@ -56,8 +56,8 @@ def sim3_exp_calc_V(s, w):
     Omega2 = np.dot(Omega, Omega)
 
     # Check whether we need to handle numerical issue
-    s_close_0 = isclose(s, 0.0)
-    t_close_0 = isclose(t, 0.0)
+    s_close_0 = np.isclose(s, 0.0)
+    t_close_0 = np.isclose(t, 0.0)
 
     if s_close_0:
         if t_close_0:
