@@ -31,10 +31,6 @@ def sim3_exp_SIM3(sim3):
     t = np.sqrt(t2)
     t3 = t2 * t
 
-    # Check whether we need to handle numerical issue
-    s_close_0 = isclose(s, 0.0)
-    t_close_0 = isclose(t, 0.0)
-
     # pre-compute some coefficients
     cos_t = cos(t)
     sin_t = sin(t)
@@ -44,6 +40,11 @@ def sim3_exp_SIM3(sim3):
     Omega = hat_R3_so3(w)
     Omega2 = np.dot(Omega, Omega)
 
+    # Check whether we need to handle numerical issue
+    s_close_0 = isclose(s, 0.0)
+    t_close_0 = isclose(t, 0.0)
+
+    # TODO: fix this for the case when both are close to 0
     if s_close_0:
         if t_close_0:
             # s = 0 and theta = 0

@@ -72,18 +72,21 @@ def R3_exp_SO3(w):
     """
     theta2 = np.inner(w, w)
     theta = np.sqrt(theta2)
-    c = np.cos(theta)
+    I = np.eye(3)
+
+    if theta == 0.0:
+        return I
 
     if np.isclose(theta, 0.0):
         # When cos(theta) -> 1, theta -> 0, we take the limit of
         # exponential map with theta -> 0
+        # Note we could omit the case when theta = 0 since this handles it
         A = 1.0
         B = 0.5
     else:
         A = np.sin(theta) / theta
         B = (1 - np.cos(theta)) / theta2
 
-    I = np.eye(3)
     wx = hat_R3_so3(w)
     wx2 = np.dot(wx, wx)
 
@@ -109,14 +112,14 @@ def SO3_log_so3(SO3):
     """
     R = np.array(SO3, dtype=float)
     # cos(theta)
-    c = (np.trace(R) - 1.0) / 2.0
-    theta = np.arccos(c)
+    cos_t = (np.trace(R) - 1.0) / 2.0
+    theta = np.arccos(cos_t)
 
-    if c == 1:
+    if cos_t == 1.0:
         # case R = I, cos(theta) = 1, w = [0, 0, 0]
-        return np.zeros((3, 3), float)
+        return np.zeros((3, 3))
     elif np.isclose(theta, np.pi):
-        # case R != I, tr(R) = -1, cos(theta) = -1
+        # case R != I, tr(R) = -1, cos(theta) = -1, theta = pi
         return skew_sqrt(R) * np.pi
     else:
         # case R != I, tr(R) != -1
