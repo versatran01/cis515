@@ -1,5 +1,6 @@
 import numpy as np
-from project4.so3 import hat_R3_so3, vee_so3_R3, R3_exp_SO3, SO3_log_R3
+from project4.so3 import (hat_R3_so3, vee_so3_R3, R3_exp_SO3, SO3_log_R3,
+                          rand_rvec)
 from math import exp, sin, cos, isclose
 
 
@@ -11,15 +12,16 @@ def SIM3_log_sim3(SIM3):
     """
     assert SIM3[-1, -1] == 1
 
-    sR = SIM3[:3, :3]
+    es_R = SIM3[:3, :3]
     Vu = SIM3[:3, 3]
     # s2I this is supposed to be diagonal
-    s2I = np.dot(sR, sR.T)
+    es2_I = np.dot(es_R, es_R.T)
     # extract s2 and take sqrt to get s
     # All diagonal elements should be the same, we just take the average
-    s = np.sqrt(np.mean(np.diag(s2I)))
+    es = np.sqrt(es2_I[0, 0])
+    s = np.log(np.sqrt(es2_I[0, 0]))
     # Now we recover R and then we apply log map to get rotation vector
-    R = sR / s
+    R = es_R / es
     w = SO3_log_R3(R)
     # with s and w we can construct V
     V = sim3_exp_calc_V(s, w)
@@ -143,6 +145,17 @@ def vee_sim3_R7(sim3):
          sim3[2, 3]], np.float)
 
     return v
+
+
+def rand_sim3():
+    """
+    Uniform sampling of sim3
+    :return:
+    """
+    w = rand_rvec()
+    s = np.random.random()
+    u = np.random.random(3)
+    return np.hstack((s, w, u))
 
 
 if __name__ == '__main__':
