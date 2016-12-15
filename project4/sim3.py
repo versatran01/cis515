@@ -1,5 +1,5 @@
 import numpy as np
-from project4.so3 import hat_R3_so3, vee_so3_R3, R3_exp_SO3
+from project4.so3 import hat_R3_so3, vee_so3_R3, R3_exp_SO3, SO3_log_R3
 from math import exp, sin, cos, isclose
 
 
@@ -9,22 +9,31 @@ def SIM3_log_sim3(SIM3):
     :param SIM3: 4x4 matrix
     :return: sim3, 4x4 matrix
     """
-    pass
+    assert SIM3[-1, -1] == 1
+
+    sR = SIM3[:3, :3]
+    Vu = SIM3[:3, 3]
+    # s2I this is supposed to be diagonal
+    s2I = np.dot(sR, sR.T)
+    # extract s2 and take sqrt to get s
+    # All diagonal elements should be the same, we just take the average
+    s = np.sqrt(np.mean(np.diag(s2I)))
+    # Now we recover R and then we apply log map to get rotation vector
+    R = sR / s
+    w = SO3_log_R3(R)
+    # with s and w we can construct V
+    V = sim3_exp_calc_V(s, w)
+    u = np.dot(np.linalg.inv(V), Vu)
+    return np.hstack((s, w, u))
 
 
-def SIM3_log_R7(SIM3):
-    pass
-
-
-def sim3_exp_R7(R7):
+def sim3_exp_calc_V(s, w):
     """
-    Exponential map R7 -> sim3 -> SIM3
-    :param R7: 1x7 vector
-    :return: SIM3, 4x4 matrix
+    Helper function that calculates V in sim3 exp map
+    :param s: scalar, scale
+    :param w: 1x3 vector
+    :return: V, 3x3 matrix
     """
-    s, a, b, c, x, y, z = R7
-    w = [a, b, c]
-    u = [x, y, z]
     # t = theta
     t2 = np.inner(w, w)
     t = np.sqrt(t2)
@@ -43,11 +52,12 @@ def sim3_exp_R7(R7):
     s_close_0 = isclose(s, 0.0)
     t_close_0 = isclose(t, 0.0)
 
-    # TODO: fix this for the case when both are close to 0
     if s_close_0:
         if t_close_0:
             # s = 0 and theta = 0
-            V = I
+            # take the limit of theta -> 0 and s -> 0
+            # V = I
+            V = I + 0.5 * Omega + 1.0 / 6 * Omega2
         else:
             # s = 0 and theta != 0
             V = I + ((1 - cos_t) / t2) * Omega + ((t - sin_t) / t3) * Omega2
@@ -57,6 +67,8 @@ def sim3_exp_R7(R7):
         if t_close_0:
             # s != 0 and theta = 0
             V = A * I
+            # TODO: failed to take the limit of theta -> 0 for Omega2
+            # V = A * I + (A + e_s) / s * Omega +
         else:
             # s !=0 and theta != 0
             s2_t2 = s2 + t2
@@ -69,9 +81,28 @@ def sim3_exp_R7(R7):
             v3 = v3a - v3b - v3c
             V = A * I + v2 * Omega + v3 * Omega2
 
+    return V
+
+
+def SIM3_log_R7(SIM3):
+    pass
+
+
+def sim3_exp_R7(R7):
+    """
+    Exponential map R7 -> sim3 -> SIM3
+    :param R7: 1x7 vector
+    :return: SIM3, 4x4 matrix
+    """
+    s, a, b, c, x, y, z = R7
+    w = [a, b, c]
+    u = [x, y, z]
+
+    V = sim3_exp_calc_V(s, w)
+
     # compute final matrix, lives in SIM3
     B = np.zeros((4, 4))
-    B[:3, :3] = e_s * R3_exp_SO3(w)
+    B[:3, :3] = np.exp(s) * R3_exp_SO3(w)
     B[:3, 3] = np.dot(V, u)
     B[3, 3] = 1
 
