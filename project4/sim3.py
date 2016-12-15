@@ -1,6 +1,6 @@
 import numpy as np
-from project4.so3 import hat_R3_so3, vee_so3_R3
-from math import exp, sin, cos
+from project4.so3 import hat_R3_so3, vee_so3_R3, R3_exp_SO3
+from math import exp, sin, cos, isclose
 
 
 def SIM3_log_sim3(SIM3):
@@ -23,63 +23,56 @@ def sim3_exp_SIM3(sim3):
     :return: SIM3, 4x4 matrix
     """
     r7 = vee_sim3_R7(sim3)  # get r7 representation
-    l, a, b, c, x, y, z = r7
-    l2 = l * l
-    theta2 = a ** 2 + b ** 2 + c ** 2  # compute theta
-    theta = np.sqrt(theta2)
-    theta3 = theta2 * theta
-    Omega = hat_R3_so3([a, b, c])  # compute omega matrix
+    s, a, b, c, x, y, z = r7
+    w = [a, b, c]
+    u = [x, y, z]
+    # t = theta
+    t2 = a ** 2 + b ** 2 + c ** 2
+    t = np.sqrt(t2)
+    t3 = t2 * t
+
+    # Check whether we need to handle numerical issue
+    s_close_0 = isclose(s, 0.0)
+    t_close_0 = isclose(t, 0.0)
+
+    # pre-compute some coefficients
+    cos_t = cos(t)
+    sin_t = sin(t)
+    I = np.eye(3)
+    s2 = s * s
+    e_s = exp(s)
+    Omega = hat_R3_so3(w)
     Omega2 = np.dot(Omega, Omega)
 
-    W = np.array([x, y, z])
-    I = np.eye(3)
-    e_l = exp(l)
-    cos_th = cos(theta)
-    sin_th = sin(theta)
-    l2_theta2 = l2 + theta2
+    if s_close_0:
+        if t_close_0:
+            # s = 0 and theta = 0
+            V = I
+        else:
+            # s = 0 and theta != 0
+            V = I + ((1 - cos_t) / t2) * Omega + ((t - sin_t) / t3) * Omega2
+    else:
+        A = (e_s - 1.0) / s
 
-    if np.isclose(l, 0.0) and np.isclose(theta, 0.0):
-        # both lambda = 0 and theta = 0
-        V = I
-        e_gamma = e_l * I
-
-    elif not np.isclose(l, 0.0) and np.isclose(theta, 0.0):
-        # lambda != 0 and theta = 0
-        V = ((e_l - 1) / l) * I
-        e_gamma = e_l * I
-
-    elif np.isclose(l, 0.0) and not np.isclose(theta, 0.0):
-        # lambda = 0 and theta != 0
-        V = I + ((1 - cos_th) / theta2) * Omega \
-            + ((theta - sin_th) / theta3) * Omega2
-        e_gamma = e_l * (I + (sin_th / theta) * Omega
-                         + ((1 - cos_th) / theta2) * Omega2)
-
-    elif not np.isclose(l, 0.0) and not np.isclose(theta, 0.0):
-        # lambda != 0 and theta != 0
-
-        v_1 = ((e_l - 1) / l) * I
-
-        v_2 = ((theta * (1 - e_l * cos_th) + e_l * l * sin_th) / (
-            theta * l2_theta2)) * Omega
-
-        v_3a = (e_l - 1) / (l * theta2)
-
-        v_3b = e_l * sin_th / (theta * l2_theta2)
-
-        v_3c = l * (e_l * cos_th - 1) / (theta2 * l2_theta2)
-
-        v_3 = (v_3a - v_3b - v_3c) * Omega2
-
-        V = v_1 + v_2 + v_3
-
-        e_gamma = e_l * (I + (sin_th / theta) * Omega
-                         + ((1 - cos_th) / theta2) * Omega2)
+        if t_close_0:
+            # s != 0 and theta = 0
+            V = A * I
+        else:
+            # s !=0 and theta != 0
+            s2_t2 = s2 + t2
+            es_cos = e_s * cos_t
+            es_sin = e_s * sin_t
+            v2 = ((t * (1 - es_cos) + s * es_sin) / (t * s2_t2))
+            v3a = A / t2
+            v3b = es_sin / (t * s2_t2)
+            v3c = s * (es_cos - 1) / (t2 * s2_t2)
+            v3 = v3a - v3b - v3c
+            V = A * I + v2 * Omega + v3 * Omega2
 
     # compute final matrix, lives in SIM3
-    B = np.zeros([4, 4])
-    B[:3, :3] = e_gamma
-    B[:3, 3] = np.dot(V, W)
+    B = np.zeros((4, 4))
+    B[:3, :3] = e_s * R3_exp_SO3(w)
+    B[:3, 3] = np.dot(V, u)
     B[3, 3] = 1
 
     return B
