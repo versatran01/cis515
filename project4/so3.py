@@ -27,10 +27,10 @@ def skew_sqrt(R):
     # k has to be positive
     assert k > 0
     bcd = SI[ind] / k
-    return hat_R3_so3(bcd)
+    return R3_hat_so3(bcd)
 
 
-def hat_R3_so3(w):
+def R3_hat_so3(w):
     """
     Hat operator R3 -> so(3)
     Create skew symmetric matrix [v]x from vector v
@@ -45,7 +45,7 @@ def hat_R3_so3(w):
                      [-wy, wx, 0]], np.float)
 
 
-def vee_so3_R3(so3):
+def so3_vee_R3(so3):
     """
     Vee operator so(3) -> R3
     :param so3: so(3), 3x3 skew-symmetric matrix
@@ -84,7 +84,7 @@ def R3_exp_SO3(w):
         A = np.sin(theta) / theta
         B = (1 - np.cos(theta)) / theta2
 
-    wx = hat_R3_so3(w)
+    wx = R3_hat_so3(w)
     wx2 = np.dot(wx, wx)
 
     R = I + A * wx + B * wx2
@@ -98,7 +98,7 @@ def so3_exp_SO3(so3):
     :param so3: so3, 3x3 skew-symmetric matrix
     :return: SO3, 3x3 special orthogonal matrix
     """
-    return R3_exp_SO3(vee_so3_R3(so3))
+    return R3_exp_SO3(so3_vee_R3(so3))
 
 
 def SO3_log_so3(SO3):
@@ -135,12 +135,13 @@ def SO3_log_R3(SO3):
     :param SO3:
     :return:
     """
-    return vee_so3_R3(SO3_log_so3(SO3))
+    return so3_vee_R3(SO3_log_so3(SO3))
 
 
-def rand_rvec():
+def rand_R3_ism_so3():
     """
-    Uniform sampling of rotation vector, norm in [0, np.pi)
+    Uniform sampling of subspace of R3 that is isomorphic to so3, norm in [0,
+    np.pi)
     :return:
     """
     r3 = np.random.random(3)

@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as nt
-from project4.so3 import (R3_exp_SO3, SO3_log_R3, hat_R3_so3, vee_so3_R3,
-                          rand_rvec)
+from project4.so3 import (R3_exp_SO3, SO3_log_R3, R3_hat_so3, so3_vee_R3,
+                          rand_R3_ism_so3)
 
 
 class TestExpmLogm(unittest.TestCase):
@@ -59,7 +59,7 @@ class TestSo3(TestExpmLogm):
         nt.assert_array_almost_equal(SO3_log_R3(R6), self.w6)
 
     def test_so3_hat_vee_random(self):
-        self.random_hat_vee(rand_rvec, hat_R3_so3, vee_so3_R3)
+        self.random_hat_vee(rand_R3_ism_so3, R3_hat_so3, so3_vee_R3)
 
     def test_so3_exp_log_random(self):
-        self.random_expm_logm(rand_rvec, R3_exp_SO3, SO3_log_R3)
+        self.random_expm_logm(rand_R3_ism_so3, R3_exp_SO3, SO3_log_R3)

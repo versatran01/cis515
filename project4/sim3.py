@@ -1,10 +1,14 @@
 import numpy as np
-from project4.so3 import (hat_R3_so3, vee_so3_R3, R3_exp_SO3, SO3_log_R3,
-                          rand_rvec)
+from project4.so3 import (R3_hat_so3, R3_exp_SO3, SO3_log_R3,
+                          rand_R3_ism_so3)
 from math import exp, sin, cos, isclose
 
 
 def SIM3_log_sim3(SIM3):
+    return R7_hat_sim3(SIM3_log_R7(SIM3))
+
+
+def SIM3_log_R7(SIM3):
     """
     Logarithm map SIM3 -> sim3
     :param SIM3: 4x4 matrix
@@ -19,13 +23,14 @@ def SIM3_log_sim3(SIM3):
     # extract s2 and take sqrt to get s
     # All diagonal elements should be the same, we just take the average
     es = np.sqrt(es2_I[0, 0])
-    s = np.log(np.sqrt(es2_I[0, 0]))
+    s = np.log(es)
     # Now we recover R and then we apply log map to get rotation vector
     R = es_R / es
     w = SO3_log_R3(R)
     # with s and w we can construct V
     V = sim3_exp_calc_V(s, w)
     u = np.dot(np.linalg.inv(V), Vu)
+
     return np.hstack((s, w, u))
 
 
@@ -47,7 +52,7 @@ def sim3_exp_calc_V(s, w):
     I = np.eye(3)
     s2 = s * s
     e_s = exp(s)
-    Omega = hat_R3_so3(w)
+    Omega = R3_hat_so3(w)
     Omega2 = np.dot(Omega, Omega)
 
     # Check whether we need to handle numerical issue
@@ -86,11 +91,7 @@ def sim3_exp_calc_V(s, w):
     return V
 
 
-def SIM3_log_R7(SIM3):
-    pass
-
-
-def sim3_exp_R7(R7):
+def R7_exp_SIM3(R7):
     """
     Exponential map R7 -> sim3 -> SIM3
     :param R7: 1x7 vector
@@ -117,10 +118,10 @@ def sim3_exp_SIM3(sim3):
     :param sim3:
     :return:
     """
-    return sim3_exp_R7(vee_sim3_R7(sim3))
+    return R7_exp_SIM3(sim3_vee_R7(sim3))
 
 
-def hat_R7_sim3(R7):
+def R7_hat_sim3(R7):
     """
     hat map R7 -> sim3
     :param R7: 1x7 vector
@@ -128,13 +129,13 @@ def hat_R7_sim3(R7):
     """
     l, w, u = np.split(R7, [1, 4])
     A = np.zeros((4, 4))
-    Omega = hat_R3_so3(w)
+    Omega = R3_hat_so3(w)
     A[:3, :3] = Omega + l * np.eye(3)
     A[:3, 3] = u
     return A
 
 
-def vee_sim3_R7(sim3):
+def sim3_vee_R7(sim3):
     """
     vee map sim3 -> R7
     :param sim3: 4x4 matrix
@@ -147,17 +148,12 @@ def vee_sim3_R7(sim3):
     return v
 
 
-def rand_sim3():
+def rand_R7_ism_sim3():
     """
-    Uniform sampling of sim3
+    Uniform sampling of subspace of R7 that is isomorphic to sim3
     :return:
     """
-    w = rand_rvec()
+    w = rand_R3_ism_so3()
     s = np.random.random()
     u = np.random.random(3)
     return np.hstack((s, w, u))
-
-
-if __name__ == '__main__':
-    r7 = np.arange(1, 8)
-    print(hat_R7_sim3(r7))
