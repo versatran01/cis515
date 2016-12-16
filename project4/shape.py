@@ -23,13 +23,13 @@ def torus(R, r, n=50):
 
 def flatten_grid(x, y, z):
     """
-    Given x, y, z grid data of size mxn, make a list of point of size 3x(mxn)
+    Given x, y, z grid data of size mxn, make a list of point of size (mxn)x3
     """
     size = np.shape(x)
     xf = np.ravel(x)
     yf = np.ravel(y)
     zf = np.ravel(z)
-    data = np.vstack((xf, yf, zf))
+    data = np.vstack((xf, yf, zf)).T
     return Shape(size=size, data=data)
 
 
@@ -40,5 +40,5 @@ def restore_grid(data, size):
     :param size: tuple of original grid shape
     :return: x, y, z grid data of size mxn
     """
-    x, y, z = data
+    x, y, z = data.T
     return np.reshape(x, size), np.reshape(y, size), np.reshape(z, size)

@@ -36,7 +36,7 @@ fig = plt.figure(facecolor='w')
 ax = fig.add_subplot(111, projection='3d')
 
 cmi = np.array(np.linspace(0, 255, n), int)
-for sim3, c in zip(sim3s.T, cmi):
+for sim3, c in zip(sim3s, cmi):
     SIM3 = R7_exp_SIM3(sim3)
     data_transformed = SIM3_transform_points(SIM3, shape.data)
     Xs, Ys, Zs = restore_grid(data_transformed, shape.size)

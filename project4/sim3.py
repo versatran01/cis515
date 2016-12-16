@@ -168,9 +168,9 @@ def SIM3_transform_points(SIM3, points):
     """
     aR = SIM3[:3, :3]
     t = SIM3[:3, 3]
-    pts = np.dot(aR, points).T + t
+    pts = np.dot(points, aR.T) + t
 
-    return pts.T
+    return pts
 
 
 def SIM3_from_sRt(s, R, t):

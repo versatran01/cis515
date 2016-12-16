@@ -9,7 +9,7 @@ def linspace_vec(v1, v2, n=100):
     for a, b in zip(v1, v2):
         l = np.linspace(a, b, num=n)
         L.append(l)
-    return np.array(L)
+    return np.transpose(np.array(L))
 
 
 def interp_sim3(sim1, sim2, n=100):
