@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from project1.bezier import BezierSubdivision
 from project1.deboor import deboor_to_bezier
-from project3.bspline import EndCondition, curve_interp
+from project3.bspline import EndCondition, curve_interp, deboor_to_bspline
 
 
 class BuilderState(Enum):
@@ -87,19 +87,6 @@ class BsplineBuilder2D(object):
     def n_points(self):
         return len(self.x)
 
-    def create_deboor(self):
-        X = np.vstack((self.x, self.y)).T
-        D = curve_interp(X, self.end_cond)
-        return D
-
-    def create_bspline(self, D):
-        B = deboor_to_bezier(D, last_point=True)
-        P = []
-        for b in B:
-            p = self.bezier.create_curve(b)
-            P.append(p)
-        return np.vstack(P)
-
     def update_lines(self):
         self.line_points_2d.set_data(self.x, self.y)
 
@@ -112,10 +99,12 @@ class BsplineBuilder2D(object):
             self.line_deboor_2d.set_data(self.x, self.y)
             self.line_bspline_2d.set_data(self.x, self.y)
         else:
+            X = np.vstack((self.x, self.y)).T
             # Create deboor control points
-            D = self.create_deboor()
+            D = curve_interp(X, self.end_cond)
             self.line_deboor_2d.set_data(D[:, 0], D[:, 1])
-            P = self.create_bspline(D)
+            # Use deboor points to generate bspline
+            P = deboor_to_bspline(D, self.bezier)
             self.line_bspline_2d.set_data(P[:, 0], P[:, 1])
 
     def get_ind_under_click(self, event, eps=5):

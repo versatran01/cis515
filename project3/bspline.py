@@ -1,6 +1,7 @@
 import numpy as np
 from enum import Enum
 from project3.lu import tridiag_from_udl, lu_solve_tridiag
+from project1.deboor import deboor_to_bezier
 
 
 class EndCondition(Enum):
@@ -13,12 +14,29 @@ class EndCondition(Enum):
     notaknot = 4
 
 
+def deboor_to_bspline(D, bezier):
+    """
+    First convert deboor control points to list of 4 bezier control points
+    Then use Bezier class to create bezier curve from each bezier segment
+    Stack them together to get final bspline
+    :param D: deBoor control points, nxm array
+    :param bezier: class of Bezier that has create_curve method
+    :return:
+    """
+    B = deboor_to_bezier(D, last_point=True)
+    P = []
+    for b in B:
+        p = bezier.create_curve(b)
+        P.append(p)
+    return np.vstack(P)
+
+
 def curve_interp(points, end_cond):
     """
     Interpolate data points using bspline by generating deBoor control points
-    :param points:
+    :param points: n points, nxm array
     :param end_cond:
-    :return:
+    :return: deBoor control points, (n+d)xm array
     """
     points = np.atleast_2d(np.array(points))
     if len(points) < 3:
