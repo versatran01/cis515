@@ -16,28 +16,28 @@ def SIM3_log_R7(SIM3):
     """
     assert SIM3[-1, -1] == 1
 
-    es_R = SIM3[:3, :3]
+    s_R = SIM3[:3, :3]
     Vu = SIM3[:3, 3]
     # s2I this is supposed to be diagonal
-    es2_I = np.dot(es_R, es_R.T)
-    # extract s2 and take sqrt to get s
+    s2_I = np.dot(s_R, s_R.T)
+    # extract s2 and take sqrt to get s = e^l
     # All diagonal elements should be the same, we just take the average
-    es = np.sqrt(es2_I[0, 0])
-    s = np.log(es)
+    s = np.sqrt(s2_I[0, 0])
+    l = np.log(s)
     # Now we recover R and then we apply log map to get rotation vector
-    R = es_R / es
+    R = s_R / s
     w = SO3_log_R3(R)
     # with s and w we can construct V
-    V = sim3_exp_calc_V(s, w)
+    V = sim3_exp_calc_V(l, w)
     u = np.dot(np.linalg.inv(V), Vu)
 
-    return np.hstack((s, w, u))
+    return np.hstack((l, w, u))
 
 
-def sim3_exp_calc_V(s, w):
+def sim3_exp_calc_V(l, w):
     """
     Helper function that calculates V in sim3 exp map
-    :param s: scalar, scale
+    :param l: scalar, scale
     :param w: 1x3 vector
     :return: V, 3x3 matrix
     """
@@ -50,13 +50,13 @@ def sim3_exp_calc_V(s, w):
     cos_t = cos(t)
     sin_t = sin(t)
     I = np.eye(3)
-    s2 = s * s
-    e_s = exp(s)
+    l2 = l * l
+    e_s = exp(l)
     Omega = R3_hat_so3(w)
     Omega2 = np.dot(Omega, Omega)
 
     # Check whether we need to handle numerical issue
-    s_close_0 = np.isclose(s, 0.0)
+    s_close_0 = np.isclose(l, 0.0)
     t_close_0 = np.isclose(t, 0.0)
 
     if s_close_0:
@@ -69,7 +69,7 @@ def sim3_exp_calc_V(s, w):
             # s = 0 and theta != 0
             V = I + ((1 - cos_t) / t2) * Omega + ((t - sin_t) / t3) * Omega2
     else:
-        A = (e_s - 1.0) / s
+        A = (e_s - 1.0) / l
 
         if t_close_0:
             # s != 0 and theta = 0
@@ -78,13 +78,13 @@ def sim3_exp_calc_V(s, w):
             # V = A * I + (A + e_s) / s * Omega +
         else:
             # s !=0 and theta != 0
-            s2_t2 = s2 + t2
+            s2_t2 = l2 + t2
             es_cos = e_s * cos_t
             es_sin = e_s * sin_t
-            v2 = ((t * (1 - es_cos) + s * es_sin) / (t * s2_t2))
+            v2 = ((t * (1 - es_cos) + l * es_sin) / (t * s2_t2))
             v3a = A / t2
             v3b = es_sin / (t * s2_t2)
-            v3c = s * (es_cos - 1) / (t2 * s2_t2)
+            v3c = l * (es_cos - 1) / (t2 * s2_t2)
             v3 = v3a - v3b - v3c
             V = A * I + v2 * Omega + v3 * Omega2
 
@@ -171,3 +171,11 @@ def SIM3_transform_points(SIM3, points):
     pts = np.dot(aR, points).T + t
 
     return pts.T
+
+
+def SIM3_from_sRt(s, R, t):
+    A = np.zeros((4, 4))
+    A[:3, :3] = s * R
+    A[:3, 3] = t
+    A[3, 3] = 1
+    return A
