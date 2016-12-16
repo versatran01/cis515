@@ -1,4 +1,7 @@
 import numpy as np
+from collections import namedtuple
+
+Shape = namedtuple('Shape', ['size', 'data'])
 
 
 def torus(R, r, n=50):
@@ -16,3 +19,26 @@ def torus(R, r, n=50):
     y = (R + r * np.cos(theta)) * np.sin(phi)
     z = r * np.sin(theta)
     return x, y, z
+
+
+def flatten_grid(x, y, z):
+    """
+    Given x, y, z grid data of size mxn, make a list of point of size 3x(mxn)
+    """
+    size = np.shape(x)
+    xf = np.ravel(x)
+    yf = np.ravel(y)
+    zf = np.ravel(z)
+    data = np.vstack((xf, yf, zf))
+    return Shape(size=size, data=data)
+
+
+def restore_grid(data, size):
+    """
+    Given data and size, restore original grid
+    :param data: 3x(mxn) points
+    :param size: tuple of original grid shape
+    :return: x, y, z grid data of size mxn
+    """
+    x, y, z = data
+    return np.reshape(x, size), np.reshape(y, size), np.reshape(z, size)

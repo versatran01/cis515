@@ -157,3 +157,17 @@ def rand_R7_ism_sim3():
     s = np.random.random()
     u = np.random.random(3)
     return np.hstack((s, w, u))
+
+
+def SIM3_transform_points(SIM3, points):
+    """
+    Apply SIM3 to points
+    :param SIM3: 4x4 matrix
+    :param points: 3xn matrix
+    :return: transformed points 3xn matrix
+    """
+    aR = SIM3[:3, :3]
+    t = SIM3[:3, 3]
+    pts = np.dot(aR, points).T + t
+
+    return pts.T
