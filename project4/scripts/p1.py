@@ -29,10 +29,11 @@ shape = flatten_grid(X, Y, Z)
 fig = plt.figure(facecolor='w')
 ax = fig.add_subplot(111, projection='3d')
 
-for sim3 in sims.T:
+cmi = np.array(np.linspace(0, 255, n), int)
+for sim3, c in zip(sims.T, cmi):
     SIM3 = R7_exp_SIM3(sim3)
     data_transformed = SIM3_transform_points(SIM3, shape.data)
     Xs, Ys, Zs = restore_grid(data_transformed, shape.size)
-    ax.plot_wireframe(Xs, Ys, Zs, rstride=5, cstride=5)
+    ax.plot_wireframe(Xs, Ys, Zs, rstride=5, cstride=5, color=plt.cm.jet(c))
 
 plt.show()
