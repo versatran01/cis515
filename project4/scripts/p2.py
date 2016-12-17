@@ -23,7 +23,7 @@ U = np.array([[0, 0, 0],
               [3, 3, 1],
               [3, 0, 1],
               [0, 1, 0]])
-S = np.array([0.25, 1, 2, 0.5, 1, 3, 1])
+S = np.array([2, 1, 2, 0.5, 1, 3, 1])
 
 sim3s = []
 for t, w, u, s in zip(T, W, U, S):
@@ -36,7 +36,7 @@ D = curve_interp(sim3s, EndCondition.natural)
 B = deboor_to_bspline(D, bezier)
 n = len(B)
 
-X, Y, Z = torus(0.2, 0.02)
+X, Y, Z = torus(0.1, 0.03)
 shape = flatten_grid(X, Y, Z)
 
 fig = plt.figure(facecolor='w')
