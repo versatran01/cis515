@@ -1,6 +1,6 @@
 import numpy as np
 from project4.so3 import (R3_hat_so3, R3_exp_SO3, SO3_log_R3,
-                          rand_R3_ism_so3)
+                          rand_R3_ism_so3, so3_vee_R3)
 from math import exp, sin, cos
 
 
@@ -141,11 +141,11 @@ def sim3_vee_R7(sim3):
     :param sim3: 4x4 matrix
     :return: R7, 1x7 vector
     """
-    v = np.array(
-        [sim3[0, 0], sim3[2, 1], sim3[0, 2], sim3[1, 0], sim3[0, 3], sim3[1, 3],
-         sim3[2, 3]], np.float)
+    l = sim3[0, 0]
+    u = sim3[:3, 3]
+    w = so3_vee_R3(sim3[:3, :3])
 
-    return v
+    return np.hstack((l, w, u))
 
 
 def rand_R7_ism_sim3():

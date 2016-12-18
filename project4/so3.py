@@ -53,11 +53,11 @@ def so3_vee_R3(so3):
     """
     assert np.ndim(so3) == 2 and np.shape(so3) == (3, 3)
 
-    wx = -so3[1, 2]
-    wy = so3[0, 2]
-    wz = -so3[0, 1]
+    wx = so3[2, 1] - so3[1, 2]
+    wy = so3[0, 2] - so3[2, 0]
+    wz = so3[1, 0] - so3[0, 1]
 
-    return np.array([wx, wy, wz])
+    return np.array([wx, wy, wz]) / 2.0
 
 
 def R3_exp_SO3(w):
