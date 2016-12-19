@@ -11,24 +11,34 @@ x, y, z = torus(2, 1, 100)
 
 n = 10
 
-t1 = 0.0
-t2 = np.pi / 2
-w1 = np.zeros(3)
-w2 = np.ones(3)
+# rotation angle
+theta1 = 0.0
+theta2 = np.pi / 2
+
+# rotation vector
 u1 = np.zeros(3)
-u2 = np.ones(3) * 3
+u2 = np.ones(3)
+
+# translation vector
+t1 = np.zeros(3)
+t2 = np.ones(3) * 3
+
+# scale
 s1 = 0.5
 s2 = 1.0
 
-R1 = R3_exp_SO3(w1 * t1)
-R2 = R3_exp_SO3(w2 * t2)
-SIM3_1 = SIM3_from_sRt(s1, R1, u1)
-SIM3_2 = SIM3_from_sRt(s2, R2, u2)
+R1 = R3_exp_SO3(u1 * theta1)
+R2 = R3_exp_SO3(u2 / np.linalg.norm(u2) * theta2)
+
+SIM3_1 = SIM3_from_sRt(s1, R1, t1)
+SIM3_2 = SIM3_from_sRt(s2, R2, t2)
+
 sim3_1 = SIM3_log_R7(SIM3_1)
 sim3_2 = SIM3_log_R7(SIM3_2)
 
 sim3s = interp_sim3(sim3_1, sim3_2, n=n)
 
+# Make a torus shape
 X, Y, Z = torus(0.5, 0.1)
 shape = flatten_grid(X, Y, Z)
 
