@@ -2,6 +2,12 @@
 
 ## Project 1
 
+Video 
+
+https://www.youtube.com/watch?v=Lyj-4JJX70Q
+
+https://www.youtube.com/watch?v=pIlueSqXc1k
+
 Deboor control points
 
 ![image](https://github.com/versatran01/cis515_project/blob/master/images/porj1-p1.png)
@@ -21,6 +27,10 @@ Haar Wavelet
 ![image](https://github.com/versatran01/cis515_project/blob/master/images/proj2-p1.png)
 
 ## Project 3
+
+Video
+
+https://youtu.be/bGGjKjAN238
 
 Interactive tool
 
