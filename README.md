@@ -1,5 +1,7 @@
 # CIS515 Fall 2016 Projects
 
+Fundamentals of Linear Algebra and Optimization
+
 ## Project 1
 
 Video 
