@@ -1,4 +1,4 @@
-# cis515_project
+# CIS515 Fall 2016 Projects
 
 ## Project 1
 
